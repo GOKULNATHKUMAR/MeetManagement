@@ -1,0 +1,141 @@
+<div class="intake-container">
+  <h1>Chicken Intake Management</h1>
+
+  <!-- Add New Intake Form -->
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Add New Intake</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="intakeForm" (ngSubmit)="onSubmit()" class="intake-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Quantity</mat-label>
+            <input matInput type="number" formControlName="quantity" required>
+            <mat-error *ngIf="intakeForm.get('quantity')?.invalid && intakeForm.get('quantity')?.touched">
+              {{ getErrorMessage('quantity') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Supplier</mat-label>
+            <input matInput formControlName="supplier" required>
+            <mat-error *ngIf="intakeForm.get('supplier')?.invalid && intakeForm.get('supplier')?.touched">
+              {{ getErrorMessage('supplier') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Cost per Unit (₹)</mat-label>
+            <input matInput type="number" step="0.01" formControlName="cost_per_unit" required>
+            <mat-error *ngIf="intakeForm.get('cost_per_unit')?.invalid && intakeForm.get('cost_per_unit')?.touched">
+              {{ getErrorMessage('cost_per_unit') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Total Cost (₹)</mat-label>
+            <input matInput type="number" step="0.01" formControlName="total_cost" required readonly>
+            <mat-hint>Auto-calculated from quantity × cost per unit</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notes (Optional)</mat-label>
+          <textarea matInput formControlName="notes" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="intakeForm.invalid || isSubmitting">
+            <span *ngIf="isSubmitting">Adding...</span>
+            <span *ngIf="!isSubmitting">Add Intake</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Intake Records Table -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>Intake Records</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="table-container" *ngIf="!isLoading; else loadingTemplate">
+        <table mat-table [dataSource]="intakes" class="intake-table">
+          <!-- Date Column -->
+          <ng-container matColumnDef="intake_date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let intake">{{ intake.intake_date | date:'short' }}</td>
+          </ng-container>
+
+          <!-- Supplier Column -->
+          <ng-container matColumnDef="supplier">
+            <th mat-header-cell *matHeaderCellDef>Supplier</th>
+            <td mat-cell *matCellDef="let intake">{{ intake.supplier }}</td>
+          </ng-container>
+
+          <!-- Quantity Column -->
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Quantity</th>
+            <td mat-cell *matCellDef="let intake">{{ intake.quantity }}</td>
+          </ng-container>
+
+          <!-- Cost per Unit Column -->
+          <ng-container matColumnDef="cost_per_unit">
+            <th mat-header-cell *matHeaderCellDef>Cost/Unit (₹)</th>
+            <td mat-cell *matCellDef="let intake">{{ intake.cost_per_unit | number:'1.2-2' }}</td>
+          </ng-container>
+
+          <!-- Total Cost Column -->
+          <ng-container matColumnDef="total_cost">
+            <th mat-header-cell *matHeaderCellDef>Total Cost (₹)</th>
+            <td mat-cell *matCellDef="let intake">{{ intake.total_cost | number:'1.2-2' }}</td>
+          </ng-container>
+
+          <!-- Notes Column -->
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>Notes</th>
+            <td mat-cell *matCellDef="let intake">{{ intake.notes || '-' }}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let intake">
+              <button mat-icon-button color="primary" (click)="editIntake(intake)" title="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteIntake(intake.id)" title="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25, 50]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
+
+      <ng-template #loadingTemplate>
+        <div class="loading-container">
+          <mat-spinner></mat-spinner>
+          <p>Loading intake records...</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>
