@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.models import ChickenIntake
+from app.models.models import ChickenIntake as ChickenIntakeModel
 from app.schemas.schemas import ChickenIntake, ChickenIntakeCreate, ChickenIntakeUpdate
 from app.utils.dependencies import get_current_approved_user
 
@@ -14,7 +14,7 @@ async def create_intake(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    db_intake = ChickenIntake(
+    db_intake = ChickenIntakeModel(
         owner_id=current_user.id,
         quantity=intake.quantity,
         supplier=intake.supplier,
@@ -35,7 +35,7 @@ async def read_intakes(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    intakes = db.query(ChickenIntake).filter(ChickenIntake.owner_id == current_user.id).offset(skip).limit(limit).all()
+    intakes = db.query(ChickenIntakeModel).filter(ChickenIntakeModel.owner_id == current_user.id).offset(skip).limit(limit).all()
     return intakes
 
 @router.get("/{intake_id}", response_model=ChickenIntake)
@@ -44,9 +44,9 @@ async def read_intake(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    intake = db.query(ChickenIntake).filter(
-        ChickenIntake.id == intake_id,
-        ChickenIntake.owner_id == current_user.id
+    intake = db.query(ChickenIntakeModel).filter(
+        ChickenIntakeModel.id == intake_id,
+        ChickenIntakeModel.owner_id == current_user.id
     ).first()
     if intake is None:
         raise HTTPException(status_code=404, detail="Intake not found")
@@ -59,9 +59,9 @@ async def update_intake(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    intake = db.query(ChickenIntake).filter(
-        ChickenIntake.id == intake_id,
-        ChickenIntake.owner_id == current_user.id
+    intake = db.query(ChickenIntakeModel).filter(
+        ChickenIntakeModel.id == intake_id,
+        ChickenIntakeModel.owner_id == current_user.id
     ).first()
     if intake is None:
         raise HTTPException(status_code=404, detail="Intake not found")
@@ -80,9 +80,9 @@ async def delete_intake(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    intake = db.query(ChickenIntake).filter(
-        ChickenIntake.id == intake_id,
-        ChickenIntake.owner_id == current_user.id
+    intake = db.query(ChickenIntakeModel).filter(
+        ChickenIntakeModel.id == intake_id,
+        ChickenIntakeModel.owner_id == current_user.id
     ).first()
     if intake is None:
         raise HTTPException(status_code=404, detail="Intake not found")

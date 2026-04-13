@@ -48,14 +48,14 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/reports']);
   }
 
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   navigateToAdmin(): void {
     if (this.isSuperUser) {
       this.router.navigate(['/admin']);
     }
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }
