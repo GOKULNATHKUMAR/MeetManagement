@@ -108,6 +108,9 @@
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let intake">
+              <button mat-icon-button color="primary" (click)="editIntake(intake)" title="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
               <button mat-icon-button color="warn" (click)="deleteIntake(intake.id)" title="Delete">
                 <mat-icon>delete</mat-icon>
               </button>

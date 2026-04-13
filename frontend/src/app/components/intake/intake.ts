@@ -12,7 +12,8 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs/operators';
-import { IntakeService, ChickenIntake, IntakeCreate } from '../../services/intake.service';
+import { IntakeService, ChickenIntake, IntakeCreate, IntakeUpdate } from '../../services/intake.service';
+import { EditIntakeDialogComponent } from './edit-intake-dialog.component';
 
 @Component({
   selector: 'app-intake',
@@ -138,6 +139,29 @@ export class Intake implements OnInit {
         }
       });
     }
+  }
+
+  editIntake(intake: ChickenIntake) {
+    const dialogRef = this.dialog.open(EditIntakeDialogComponent, {
+      width: '500px',
+      data: { ...intake }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const updateData: IntakeUpdate = result;
+        this.intakeService.updateIntake(intake.id, updateData).subscribe({
+          next: () => {
+            this.snackBar.open('Intake record updated successfully', 'Close', { duration: 3000 });
+            this.loadIntakes();
+          },
+          error: (error) => {
+            console.error('Error updating intake:', error);
+            this.snackBar.open('Error updating intake record', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
   }
 
   getErrorMessage(fieldName: string): string {
