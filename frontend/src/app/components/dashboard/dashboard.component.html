@@ -1,0 +1,66 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Chicken Shop Management Dashboard</h1>
+    <button mat-raised-button color="warn" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      Logout
+    </button>
+  </header>
+
+  <mat-grid-list cols="2" rowHeight="200px" class="dashboard-grid">
+    <!-- Chicken Intake -->
+    <mat-grid-tile>
+      <mat-card class="dashboard-card" (click)="navigateToIntake()">
+        <mat-card-content>
+          <mat-icon class="card-icon">inventory</mat-icon>
+          <h3>Chicken Intake</h3>
+          <p>Manage chicken inventory and suppliers</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+    <!-- Sales -->
+    <mat-grid-tile>
+      <mat-card class="dashboard-card" (click)="navigateToSales()">
+        <mat-card-content>
+          <mat-icon class="card-icon">shopping_cart</mat-icon>
+          <h3>Sales</h3>
+          <p>Track sales transactions and revenue</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+    <!-- Expenses -->
+    <mat-grid-tile>
+      <mat-card class="dashboard-card" (click)="navigateToExpenses()">
+        <mat-card-content>
+          <mat-icon class="card-icon">receipt</mat-icon>
+          <h3>Expenses</h3>
+          <p>Monitor business expenses</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+    <!-- Reports -->
+    <mat-grid-tile>
+      <mat-card class="dashboard-card" (click)="navigateToReports()">
+        <mat-card-content>
+          <mat-icon class="card-icon">analytics</mat-icon>
+          <h3>Reports</h3>
+          <p>Generate reports and analytics</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
+    <!-- Admin Panel (only for super users) -->
+    <mat-grid-tile *ngIf="isSuperUser">
+      <mat-card class="dashboard-card admin-card" (click)="navigateToAdmin()">
+        <mat-card-content>
+          <mat-icon class="card-icon">admin_panel_settings</mat-icon>
+          <h3>Admin Panel</h3>
+          <p>Manage users and system settings</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
