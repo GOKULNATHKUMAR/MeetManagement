@@ -1,14 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from datetime import datetime, date
 from typing import List
 import io
+import requests
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib import colors
-from twilio.rest import Client
 from decouple import config
 from app.database import get_db
 from app.models.models import ChickenIntake, ChickenSale, Expense
@@ -17,11 +18,9 @@ from app.utils.dependencies import get_current_approved_user
 
 router = APIRouter()
 
-# Twilio configuration
-TWILIO_ACCOUNT_SID = config("TWILIO_ACCOUNT_SID", default="")
-TWILIO_AUTH_TOKEN = config("TWILIO_AUTH_TOKEN", default="")
-TWILIO_PHONE_NUMBER = config("TWILIO_PHONE_NUMBER", default="")
-WHATSAPP_NUMBER = config("WHATSAPP_NUMBER", default="")
+# Telegram Bot Configuration (Free alternative to Twilio)
+TELEGRAM_BOT_TOKEN = config("TELEGRAM_BOT_TOKEN", default="")
+TELEGRAM_CHAT_ID = config("TELEGRAM_CHAT_ID", default="")
 
 @router.get("/daily/{report_date}", response_model=DailyReport)
 async def get_daily_report(
@@ -63,39 +62,50 @@ async def get_daily_report(
         profit_loss=profit_loss
     )
 
-@router.post("/daily/whatsapp/{report_date}")
-async def send_daily_whatsapp_report(
+@router.post("/daily/telegram/{report_date}")
+async def send_daily_telegram_report(
     report_date: date,
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    if not all([TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, WHATSAPP_NUMBER]):
-        raise HTTPException(status_code=500, detail="WhatsApp configuration not set up")
+    invalid_telegram_config = any(
+        value in ("", "your-telegram-bot-token", "your-telegram-chat-id")
+        for value in (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
+    )
+
+    if invalid_telegram_config:
+        raise HTTPException(
+            status_code=500,
+            detail="Telegram configuration not set up. Replace Telegram placeholder values in backend/.env with your actual bot token and chat ID."
+        )
 
     report = await get_daily_report(report_date, current_user, db)
 
-    message = f"""Daily Report - {report.date}
+    message = f"""📊 *Daily Report - {report.date}*
 
-Total Intake: ₹{report.total_intake:.2f}
-Total Sales: ₹{report.total_sales:.2f}
-Total Expenses: ₹{report.total_expenses:.2f}
-Profit/Loss: ₹{report.profit_loss:.2f}
+💰 *Total Intake:* ₹{report.total_intake:.2f}
+💵 *Total Sales:* ₹{report.total_sales:.2f}
+💸 *Total Expenses:* ₹{report.total_expenses:.2f}
+📈 *Profit/Loss:* ₹{report.profit_loss:.2f}
 
-Generated for {current_user.full_name}"""
+_Generated for {current_user.full_name}_"""
 
     try:
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        client.messages.create(
-            body=message,
-            from_=f"whatsapp:{TWILIO_PHONE_NUMBER}",
-            to=f"whatsapp:{WHATSAPP_NUMBER}"
-        )
-        return {"message": "Daily report sent via WhatsApp"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to send WhatsApp message: {str(e)}")
+        telegram_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        payload = {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": message,
+            "parse_mode": "Markdown"
+        }
+        response = requests.post(telegram_url, json=payload)
+        response.raise_for_status()
+
+        return {"message": "Daily report sent via Telegram"}
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Failed to send Telegram message: {str(e)}")
 
 @router.get("/monthly/{year}/{month}")
-async def get_monthly_report(
+def get_monthly_report(
     year: int,
     month: int,
     current_user = Depends(get_current_approved_user),
@@ -165,7 +175,7 @@ async def generate_monthly_pdf_report(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    report_data = await get_monthly_report(year, month, current_user, db)
+    report_data = get_monthly_report(year, month, current_user, db)
 
     # Create PDF
     buffer = io.BytesIO()
@@ -261,7 +271,8 @@ async def generate_monthly_pdf_report(
     doc.build(story)
     buffer.seek(0)
 
-    return {
-        "filename": f"monthly_report_{report_data.month}_{report_data.year}.pdf",
-        "content": buffer.getvalue()
-    }
+    return StreamingResponse(
+        io.BytesIO(buffer.getvalue()),
+        media_type='application/pdf',
+        headers={'Content-Disposition': f'attachment; filename="monthly_report_{report_data.month}_{report_data.year}.pdf"'}
+    )

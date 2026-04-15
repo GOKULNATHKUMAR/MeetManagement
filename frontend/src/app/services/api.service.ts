@@ -34,4 +34,11 @@ export class ApiService {
   delete<T>(endpoint: string): Observable<T> {
     return this.http.delete<T>(`${this.baseUrl}${endpoint}`, { headers: this.getHeaders() });
   }
+
+  getBlob(endpoint: string): Observable<Blob> {
+    const headers = new HttpHeaders({
+      'Authorization': localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : ''
+    });
+    return this.http.get(`${this.baseUrl}${endpoint}`, { headers, responseType: 'blob' });
+  }
 }

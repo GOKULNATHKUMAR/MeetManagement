@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 # User schemas
@@ -139,6 +139,6 @@ class MonthlyReport(BaseModel):
     total_sales: float
     total_expenses: float
     profit_loss: float
-    intake_details: list
-    sales_details: list
-    expenses_details: list
+    intake_details: List[dict]
+    sales_details: List[dict]
+    expenses_details: List[dict]
