@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.models import Expense
+from app.models.models import Expense as ExpenseModel
 from app.schemas.schemas import Expense, ExpenseCreate, ExpenseUpdate
 from app.utils.dependencies import get_current_approved_user
 
@@ -14,7 +14,7 @@ async def create_expense(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    db_expense = Expense(
+    db_expense = ExpenseModel(
         owner_id=current_user.id,
         category=expense.category,
         amount=expense.amount,
@@ -33,7 +33,7 @@ async def read_expenses(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    expenses = db.query(Expense).filter(Expense.owner_id == current_user.id).offset(skip).limit(limit).all()
+    expenses = db.query(ExpenseModel).filter(ExpenseModel.owner_id == current_user.id).offset(skip).limit(limit).all()
     return expenses
 
 @router.get("/{expense_id}", response_model=Expense)
@@ -42,9 +42,9 @@ async def read_expense(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    expense = db.query(Expense).filter(
-        Expense.id == expense_id,
-        Expense.owner_id == current_user.id
+    expense = db.query(ExpenseModel).filter(
+        ExpenseModel.id == expense_id,
+        ExpenseModel.owner_id == current_user.id
     ).first()
     if expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
@@ -57,9 +57,9 @@ async def update_expense(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    expense = db.query(Expense).filter(
-        Expense.id == expense_id,
-        Expense.owner_id == current_user.id
+    expense = db.query(ExpenseModel).filter(
+        ExpenseModel.id == expense_id,
+        ExpenseModel.owner_id == current_user.id
     ).first()
     if expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
@@ -78,9 +78,9 @@ async def delete_expense(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    expense = db.query(Expense).filter(
-        Expense.id == expense_id,
-        Expense.owner_id == current_user.id
+    expense = db.query(ExpenseModel).filter(
+        ExpenseModel.id == expense_id,
+        ExpenseModel.owner_id == current_user.id
     ).first()
     if expense is None:
         raise HTTPException(status_code=404, detail="Expense not found")
