@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.models import ChickenSale
+from app.models.models import ChickenSale as ChickenSaleModel
 from app.schemas.schemas import ChickenSale, ChickenSaleCreate, ChickenSaleUpdate
 from app.utils.dependencies import get_current_approved_user
 
@@ -14,7 +14,7 @@ async def create_sale(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    db_sale = ChickenSale(
+    db_sale = ChickenSaleModel(
         owner_id=current_user.id,
         quantity=sale.quantity,
         price_per_unit=sale.price_per_unit,
@@ -35,7 +35,7 @@ async def read_sales(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    sales = db.query(ChickenSale).filter(ChickenSale.owner_id == current_user.id).offset(skip).limit(limit).all()
+    sales = db.query(ChickenSaleModel).filter(ChickenSaleModel.owner_id == current_user.id).offset(skip).limit(limit).all()
     return sales
 
 @router.get("/{sale_id}", response_model=ChickenSale)
@@ -44,9 +44,9 @@ async def read_sale(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    sale = db.query(ChickenSale).filter(
-        ChickenSale.id == sale_id,
-        ChickenSale.owner_id == current_user.id
+    sale = db.query(ChickenSaleModel).filter(
+        ChickenSaleModel.id == sale_id,
+        ChickenSaleModel.owner_id == current_user.id
     ).first()
     if sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
@@ -59,9 +59,9 @@ async def update_sale(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    sale = db.query(ChickenSale).filter(
-        ChickenSale.id == sale_id,
-        ChickenSale.owner_id == current_user.id
+    sale = db.query(ChickenSaleModel).filter(
+        ChickenSaleModel.id == sale_id,
+        ChickenSaleModel.owner_id == current_user.id
     ).first()
     if sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")
@@ -80,9 +80,9 @@ async def delete_sale(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    sale = db.query(ChickenSale).filter(
-        ChickenSale.id == sale_id,
-        ChickenSale.owner_id == current_user.id
+    sale = db.query(ChickenSaleModel).filter(
+        ChickenSaleModel.id == sale_id,
+        ChickenSaleModel.owner_id == current_user.id
     ).first()
     if sale is None:
         raise HTTPException(status_code=404, detail="Sale not found")

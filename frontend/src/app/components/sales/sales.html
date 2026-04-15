@@ -1,0 +1,141 @@
+<div class="sales-container">
+  <h1>Chicken Sales Management</h1>
+
+  <!-- Add New Sale Form -->
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Add New Sale</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="saleForm" (ngSubmit)="onSubmit()" class="sales-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Quantity</mat-label>
+            <input matInput type="number" formControlName="quantity" required>
+            <mat-error *ngIf="saleForm.get('quantity')?.invalid && saleForm.get('quantity')?.touched">
+              {{ getErrorMessage('quantity') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Customer Name</mat-label>
+            <input matInput formControlName="customer_name" required>
+            <mat-error *ngIf="saleForm.get('customer_name')?.invalid && saleForm.get('customer_name')?.touched">
+              {{ getErrorMessage('customer_name') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Price per Unit (₹)</mat-label>
+            <input matInput type="number" step="0.01" formControlName="price_per_unit" required>
+            <mat-error *ngIf="saleForm.get('price_per_unit')?.invalid && saleForm.get('price_per_unit')?.touched">
+              {{ getErrorMessage('price_per_unit') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Total Revenue (₹)</mat-label>
+            <input matInput type="number" step="0.01" formControlName="total_revenue" required readonly>
+            <mat-hint>Auto-calculated from quantity × price per unit</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Notes (Optional)</mat-label>
+          <textarea matInput formControlName="notes" rows="3"></textarea>
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="saleForm.invalid || isSubmitting">
+            <span *ngIf="isSubmitting">Adding...</span>
+            <span *ngIf="!isSubmitting">Add Sale</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Sales Records Table -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>Sales Records</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="table-container" *ngIf="!isLoading; else loadingTemplate">
+        <table mat-table [dataSource]="sales" class="sales-table">
+          <!-- Date Column -->
+          <ng-container matColumnDef="sale_date">
+            <th mat-header-cell *matHeaderCellDef>Date</th>
+            <td mat-cell *matCellDef="let sale">{{ sale.sale_date | date:'short' }}</td>
+          </ng-container>
+
+          <!-- Customer Column -->
+          <ng-container matColumnDef="customer_name">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let sale">{{ sale.customer_name }}</td>
+          </ng-container>
+
+          <!-- Quantity Column -->
+          <ng-container matColumnDef="quantity">
+            <th mat-header-cell *matHeaderCellDef>Quantity</th>
+            <td mat-cell *matCellDef="let sale">{{ sale.quantity }}</td>
+          </ng-container>
+
+          <!-- Price per Unit Column -->
+          <ng-container matColumnDef="price_per_unit">
+            <th mat-header-cell *matHeaderCellDef>Price/Unit (₹)</th>
+            <td mat-cell *matCellDef="let sale">{{ sale.price_per_unit | number:'1.2-2' }}</td>
+          </ng-container>
+
+          <!-- Total Revenue Column -->
+          <ng-container matColumnDef="total_revenue">
+            <th mat-header-cell *matHeaderCellDef>Total Revenue (₹)</th>
+            <td mat-cell *matCellDef="let sale">{{ sale.total_revenue | number:'1.2-2' }}</td>
+          </ng-container>
+
+          <!-- Notes Column -->
+          <ng-container matColumnDef="notes">
+            <th mat-header-cell *matHeaderCellDef>Notes</th>
+            <td mat-cell *matCellDef="let sale">{{ sale.notes || '-' }}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let sale">
+              <button mat-icon-button color="primary" (click)="editSale(sale)" title="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteSale(sale.id)" title="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <mat-paginator
+          [length]="totalItems"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25, 50]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
+
+      <ng-template #loadingTemplate>
+        <div class="loading-container">
+          <mat-spinner></mat-spinner>
+          <p>Loading sales records...</p>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>
