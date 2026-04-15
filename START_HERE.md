@@ -204,7 +204,7 @@ MeetManagement/
 
 ### Reports
 - `GET /api/reports/daily/{date}` - Daily report
-- `POST /api/reports/daily/whatsapp/{date}` - Send via WhatsApp
+- `POST /api/reports/daily/telegram/{date}` - Send via Telegram
 - `GET /api/reports/monthly/{year}/{month}` - Monthly report
 - `GET /api/reports/monthly/pdf/{year}/{month}` - PDF export
 
