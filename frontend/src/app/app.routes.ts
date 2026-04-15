@@ -4,6 +4,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { Intake } from './components/intake/intake';
 import { Sales } from './components/sales/sales';
 import { Expenses } from './components/expenses/expenses';
+import { ReportsComponent } from './components/reports/reports.component';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -13,6 +14,6 @@ export const routes: Routes = [
   { path: 'intake', component: Intake, canActivate: [AuthGuard] }, // Intake management
   { path: 'sales', component: Sales, canActivate: [AuthGuard] }, // Sales management
   { path: 'expenses', component: Expenses, canActivate: [AuthGuard] }, // Expenses management
-  { path: 'reports', component: DashboardComponent, canActivate: [AuthGuard] }, // Replace with ReportsComponent
+  { path: 'reports', component: ReportsComponent, canActivate: [AuthGuard] }, // Reports & Analytics
   { path: 'admin', component: DashboardComponent, canActivate: [AuthGuard] }, // Replace with AdminComponent
 ];
