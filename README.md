@@ -31,15 +31,30 @@ A comprehensive web application for chicken shop owners to manage their business
 
 ### 6. Report Management
 - Manual report generation
-- Daily summary notifications via WhatsApp
+- **FREE** Daily summary notifications via Telegram
 - Monthly PDF reports with profit/loss analysis
+- Automated calculations and insights
 
 ## Technology Stack
 
 - **Backend**: Python 3.11.0, FastAPI
-- **Frontend**: Angular 21.1.2, npm 11.6.2
+- **Frontend**: Angular 17, npm 11.6.2
 - **Database**: PostgreSQL
+- **Notifications**: Telegram Bot API (completely free)
 - **Deployment**: Free platform supporting up to 5 users
+
+## Documentation
+
+📚 **Complete Documentation Suite Available**
+
+- **[📖 Full Documentation Index](docs/README.md)** - All guides and references
+- **[🚀 Quick Start Guide](START_HERE.md)** - Get running in 5 minutes
+- **[🛠️ Development Guide](docs/DEVELOPMENT_GUIDE.md)** - Complete setup instructions
+- **[📡 API Reference](docs/API_REFERENCE.md)** - All endpoints with examples
+- **[🐔 Telegram Setup](docs/TELEGRAM_SETUP.md)** - Free notification setup
+- **[🔧 Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues & solutions
+- **[🚀 Deployment Guide](deployment/DEPLOYMENT_GUIDE.md)** - Production deployment
+- **[🗄️ Database Schema](docs/DATABASE_SCHEMA.md)** - Data structure & relationships
 
 ## Project Structure
 
@@ -47,7 +62,23 @@ A comprehensive web application for chicken shop owners to manage their business
 chicken-shop-management/
 ├── backend/              # FastAPI backend
 ├── frontend/             # Angular frontend
-├── docs/                 # Documentation
+├── docs/                 # 📚 Complete documentation suite
+│   ├── README.md        # Documentation index
+│   ├── API_REFERENCE.md # API endpoints
+│   ├── TELEGRAM_SETUP.md # Free notifications
+│   ├── TROUBLESHOOTING.md # Issue resolution
+│   ├── DATABASE_SCHEMA.md # Data model
+│   └── ...              # More guides
+├── deployment/           # Production deployment
+├── QUICK_REFERENCE.md    # Project status
+├── README.md            # This file
+└── START_HERE.md        # Quick start
+```
+├── deployment/           # Deployment guides
+├── QUICK_REFERENCE.md    # Project overview
+├── README.md            # This file
+└── START_HERE.md        # Quick start guide
+```
 ├── deployment/           # Deployment configurations
 └── README.md            # This file
 ```

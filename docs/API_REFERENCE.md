@@ -412,16 +412,16 @@ Response (200):
 }
 ```
 
-### Send Daily Report via WhatsApp
+### Send Daily Report via Telegram
 ```
-POST /api/reports/daily/whatsapp/{date}
+POST /api/reports/daily/telegram/{date}
 Authorization: Bearer {token}
 
-Example: /api/reports/daily/whatsapp/2024-04-07
+Example: /api/reports/daily/telegram/2024-04-07
 
 Response (200):
 {
-  "message": "Daily report sent via WhatsApp"
+  "message": "Daily report sent via Telegram"
 }
 ```
 
