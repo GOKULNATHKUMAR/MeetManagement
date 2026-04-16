@@ -466,7 +466,73 @@ Response (200):
   ]
 }
 ```
+## Admin Endpoints (Super Users Only)
 
+### Get All Users
+```
+GET /api/admin/users
+Authorization: Bearer {token} (Super User only)
+
+Response (200):
+[
+  {
+    "id": 1,
+    "email": "user@example.com",
+    "username": "username",
+    "full_name": "Full Name",
+    "is_active": true,
+    "is_superuser": false,
+    "is_approved": true,
+    "created_at": "2024-04-07T10:30:00Z"
+  }
+]
+```
+
+### Approve User
+```
+PUT /api/admin/users/{user_id}/approve
+Authorization: Bearer {token} (Super User only)
+
+Response (200):
+{
+  "message": "User approved successfully"
+}
+```
+
+### Deactivate User
+```
+PUT /api/admin/users/{user_id}/deactivate
+Authorization: Bearer {token} (Super User only)
+
+Response (200):
+{
+  "message": "User deactivated successfully"
+}
+```
+
+### Get All Intakes (System-wide)
+```
+GET /api/admin/intakes/all
+Authorization: Bearer {token} (Super User only)
+
+Response (200): Array of intake records with owner information
+```
+
+### Get All Sales (System-wide)
+```
+GET /api/admin/sales/all
+Authorization: Bearer {token} (Super User only)
+
+Response (200): Array of sales records with owner information
+```
+
+### Get All Expenses (System-wide)
+```
+GET /api/admin/expenses/all
+Authorization: Bearer {token} (Super User only)
+
+Response (200): Array of expense records with owner information
+```
 ### Get Monthly Report as PDF
 ```
 GET /api/reports/monthly/pdf/{year}/{month}

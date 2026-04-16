@@ -1,0 +1,260 @@
+<div class="admin-container">
+  <h1>Admin Panel</h1>
+  <p class="admin-subtitle">Manage users, approvals, and system-wide data</p>
+
+  <mat-tab-group>
+    <!-- User Management Tab -->
+    <mat-tab label="User Management">
+      <div class="tab-content">
+        <mat-card class="data-card">
+          <mat-card-header>
+            <mat-card-title>All Users</mat-card-title>
+            <mat-card-subtitle>Manage user accounts and approvals</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="action-buttons">
+              <button mat-raised-button color="primary" (click)="loadUsers()">
+                <mat-icon>refresh</mat-icon>
+                Refresh
+              </button>
+            </div>
+
+            <div *ngIf="loadingUsers" class="loading-spinner">
+              <mat-spinner diameter="40"></mat-spinner>
+              <p>Loading users...</p>
+            </div>
+
+            <div *ngIf="!loadingUsers" class="table-container">
+              <table mat-table [dataSource]="users" class="user-table">
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef>ID</th>
+                  <td mat-cell *matCellDef="let user">{{ user.id }}</td>
+                </ng-container>
+
+                <!-- Username Column -->
+                <ng-container matColumnDef="username">
+                  <th mat-header-cell *matHeaderCellDef>Username</th>
+                  <td mat-cell *matCellDef="let user">{{ user.username }}</td>
+                </ng-container>
+
+                <!-- Email Column -->
+                <ng-container matColumnDef="email">
+                  <th mat-header-cell *matHeaderCellDef>Email</th>
+                  <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+                </ng-container>
+
+                <!-- Full Name Column -->
+                <ng-container matColumnDef="full_name">
+                  <th mat-header-cell *matHeaderCellDef>Full Name</th>
+                  <td mat-cell *matCellDef="let user">{{ user.full_name }}</td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef>Status</th>
+                  <td mat-cell *matCellDef="let user">
+                    <mat-chip [color]="getUserStatusColor(user)" selected>
+                      {{ getUserStatus(user) }}
+                    </mat-chip>
+                  </td>
+                </ng-container>
+
+                <!-- Role Column -->
+                <ng-container matColumnDef="role">
+                  <th mat-header-cell *matHeaderCellDef>Role</th>
+                  <td mat-cell *matCellDef="let user">{{ getUserRole(user) }}</td>
+                </ng-container>
+
+                <!-- Created At Column -->
+                <ng-container matColumnDef="created_at">
+                  <th mat-header-cell *matHeaderCellDef>Created</th>
+                  <td mat-cell *matCellDef="let user">{{ user.created_at | date:'short' }}</td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let user">
+                    <div class="action-buttons">
+                      <button *ngIf="!user.is_approved && user.is_active"
+                              mat-raised-button color="primary"
+                              (click)="approveUser(user)">
+                        <mat-icon>check_circle</mat-icon>
+                        Approve
+                      </button>
+                      <button *ngIf="user.is_active && !user.is_superuser"
+                              mat-raised-button color="warn"
+                              (click)="deactivateUser(user)">
+                        <mat-icon>block</mat-icon>
+                        Deactivate
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedUserColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedUserColumns;"></tr>
+              </table>
+
+              <div *ngIf="users.length === 0" class="no-data">
+                <mat-icon>people</mat-icon>
+                <p>No users found</p>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- System Data Tab -->
+    <mat-tab label="System Data">
+      <div class="tab-content">
+        <div class="data-grid">
+          <!-- All Intakes -->
+          <mat-card class="data-card">
+            <mat-card-header>
+              <mat-card-title>All Chicken Intakes</mat-card-title>
+              <mat-card-subtitle>System-wide intake records</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <button mat-raised-button color="primary" (click)="loadIntakes()">
+                <mat-icon>refresh</mat-icon>
+                Load Intakes
+              </button>
+
+              <div *ngIf="loadingIntakes" class="loading-spinner">
+                <mat-spinner diameter="30"></mat-spinner>
+              </div>
+
+              <div *ngIf="!loadingIntakes && intakes.length > 0" class="mini-table">
+                <table mat-table [dataSource]="intakes" class="mini-table-content">
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef>ID</th>
+                    <td mat-cell *matCellDef="let item">{{ item.id }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="owner">
+                    <th mat-header-cell *matHeaderCellDef>Owner</th>
+                    <td mat-cell *matCellDef="let item">{{ item.owner?.username || 'N/A' }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="supplier">
+                    <th mat-header-cell *matHeaderCellDef>Supplier</th>
+                    <td mat-cell *matCellDef="let item">{{ item.supplier }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="quantity">
+                    <th mat-header-cell *matHeaderCellDef>Quantity</th>
+                    <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="total_cost">
+                    <th mat-header-cell *matHeaderCellDef>Total Cost</th>
+                    <td mat-cell *matCellDef="let item">{{ formatCurrency(item.total_cost) }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="intake_date">
+                    <th mat-header-cell *matHeaderCellDef>Date</th>
+                    <td mat-cell *matCellDef="let item">{{ item.intake_date | date:'short' }}</td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedIntakeColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedIntakeColumns;"></tr>
+                </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- All Sales -->
+          <mat-card class="data-card">
+            <mat-card-header>
+              <mat-card-title>All Sales</mat-card-title>
+              <mat-card-subtitle>System-wide sales records</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <button mat-raised-button color="primary" (click)="loadSales()">
+                <mat-icon>refresh</mat-icon>
+                Load Sales
+              </button>
+
+              <div *ngIf="loadingSales" class="loading-spinner">
+                <mat-spinner diameter="30"></mat-spinner>
+              </div>
+
+              <div *ngIf="!loadingSales && sales.length > 0" class="mini-table">
+                <table mat-table [dataSource]="sales" class="mini-table-content">
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef>ID</th>
+                    <td mat-cell *matCellDef="let item">{{ item.id }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="owner">
+                    <th mat-header-cell *matHeaderCellDef>Owner</th>
+                    <td mat-cell *matCellDef="let item">{{ item.owner?.username || 'N/A' }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="customer">
+                    <th mat-header-cell *matHeaderCellDef>Customer</th>
+                    <td mat-cell *matCellDef="let item">{{ item.customer_name || 'N/A' }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="quantity">
+                    <th mat-header-cell *matHeaderCellDef>Quantity</th>
+                    <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="total_revenue">
+                    <th mat-header-cell *matHeaderCellDef>Revenue</th>
+                    <td mat-cell *matCellDef="let item">{{ formatCurrency(item.total_revenue) }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="sale_date">
+                    <th mat-header-cell *matHeaderCellDef>Date</th>
+                    <td mat-cell *matCellDef="let item">{{ item.sale_date | date:'short' }}</td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedSalesColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedSalesColumns;"></tr>
+                </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- All Expenses -->
+          <mat-card class="data-card">
+            <mat-card-header>
+              <mat-card-title>All Expenses</mat-card-title>
+              <mat-card-subtitle>System-wide expense records</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <button mat-raised-button color="primary" (click)="loadExpenses()">
+                <mat-icon>refresh</mat-icon>
+                Load Expenses
+              </button>
+
+              <div *ngIf="loadingExpenses" class="loading-spinner">
+                <mat-spinner diameter="30"></mat-spinner>
+              </div>
+
+              <div *ngIf="!loadingExpenses && expenses.length > 0" class="mini-table">
+                <table mat-table [dataSource]="expenses" class="mini-table-content">
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef>ID</th>
+                    <td mat-cell *matCellDef="let item">{{ item.id }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="owner">
+                    <th mat-header-cell *matHeaderCellDef>Owner</th>
+                    <td mat-cell *matCellDef="let item">{{ item.owner?.username || 'N/A' }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef>Category</th>
+                    <td mat-cell *matCellDef="let item">{{ item.category }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="amount">
+                    <th mat-header-cell *matHeaderCellDef>Amount</th>
+                    <td mat-cell *matCellDef="let item">{{ formatCurrency(item.amount) }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="expense_date">
+                    <th mat-header-cell *matHeaderCellDef>Date</th>
+                    <td mat-cell *matCellDef="let item">{{ item.expense_date | date:'short' }}</td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedExpensesColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedExpensesColumns;"></tr>
+                </table>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

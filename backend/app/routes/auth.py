@@ -6,7 +6,7 @@ from app.database import get_db
 from app.models.models import User
 from app.schemas.schemas import UserCreate, User, LoginRequest, Token
 from app.utils.auth import authenticate_user, create_access_token, get_password_hash, verify_password, ACCESS_TOKEN_EXPIRE_MINUTES
-from app.utils.dependencies import get_current_superuser
+from app.utils.dependencies import get_current_active_user, get_current_superuser
 
 router = APIRouter()
 
@@ -55,6 +55,12 @@ async def login_for_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.get("/me", response_model=User)
+async def get_current_user_info(
+    current_user: User = Depends(get_current_active_user)
+):
+    return current_user
 
 @router.post("/reset-password")
 async def reset_password(email: str, db: Session = Depends(get_db)):

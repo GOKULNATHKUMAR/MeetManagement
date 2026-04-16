@@ -206,7 +206,10 @@ MeetManagement/
 - `GET /api/reports/daily/{date}` - Daily report
 - `POST /api/reports/daily/telegram/{date}` - Send via Telegram
 - `GET /api/reports/monthly/{year}/{month}` - Monthly report
-- `GET /api/reports/monthly/pdf/{year}/{month}` - PDF export
+- `PUT /api/admin/users/{id}/approve` - Approve user registration
+- `PUT /api/admin/users/{id}/deactivate` - Deactivate user account
+- `GET /api/admin/users` - Get all users (admin only)
+- `GET /api/admin/intakes/all` - Get all intakes (admin only)
 
 ### Admin
 - `GET /api/admin/users` - All users

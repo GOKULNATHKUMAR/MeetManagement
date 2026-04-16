@@ -45,9 +45,17 @@ export class LoginComponent {
       this.isLoading = true;
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
-          this.isLoading = false;
-          this.snackBar.open('Login successful!', 'Close', { duration: 3000 });
-          this.router.navigate(['/dashboard']);
+          this.authService.loadCurrentUser().subscribe({
+            next: () => {
+              this.isLoading = false;
+              this.snackBar.open('Login successful!', 'Close', { duration: 3000 });
+              this.router.navigate(['/dashboard']);
+            },
+            error: () => {
+              this.isLoading = false;
+              this.snackBar.open('Unable to load user profile.', 'Close', { duration: 3000 });
+            }
+          });
         },
         error: (error) => {
           this.isLoading = false;
