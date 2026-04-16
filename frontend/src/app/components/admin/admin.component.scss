@@ -1,0 +1,169 @@
+.admin-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  h1 {
+    color: #3f51b5;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .admin-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 32px;
+    font-size: 16px;
+  }
+}
+
+.tab-content {
+  padding: 20px 0;
+}
+
+.data-card {
+  margin-bottom: 24px;
+
+  mat-card-header {
+    margin-bottom: 16px;
+  }
+
+  .action-buttons {
+    margin-bottom: 16px;
+
+    button {
+      margin-right: 12px;
+    }
+  }
+}
+
+.user-table {
+  width: 100%;
+  margin-top: 16px;
+
+  th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+  }
+
+  td {
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+
+    button {
+      font-size: 12px;
+      padding: 4px 12px;
+      min-width: auto;
+    }
+  }
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.mini-table {
+  margin-top: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+
+  .mini-table-content {
+    th {
+      background-color: #f9f9f9;
+      font-weight: 600;
+      color: #555;
+      font-size: 12px;
+      padding: 8px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    td {
+      font-size: 12px;
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+  }
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #999;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 10px;
+  }
+
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-table {
+    font-size: 12px;
+
+    .action-buttons {
+      flex-direction: column;
+      gap: 4px;
+
+      button {
+        width: 100%;
+        font-size: 11px;
+      }
+    }
+  }
+
+  .mini-table {
+    max-height: 300px;
+
+    .mini-table-content {
+      font-size: 11px;
+    }
+  }
+}

@@ -29,11 +29,11 @@ A comprehensive web application for chicken shop owners to manage their business
 - Full CRUD operations for expense records
 - Categorize and monitor spending
 
-### 6. Report Management
-- Manual report generation
-- **FREE** Daily summary notifications via Telegram
-- Monthly PDF reports with profit/loss analysis
-- Automated calculations and insights
+### 7. Admin Panel (Super Users Only)
+- **User Management**: Approve/reject new user registrations
+- **System Oversight**: View all users, intakes, sales, and expenses across the system
+- **Account Control**: Activate/deactivate user accounts
+- **Data Monitoring**: Access to all business data for auditing purposes
 
 ## Technology Stack
 

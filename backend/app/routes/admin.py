@@ -2,18 +2,18 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
-from app.models.models import User, ChickenIntake, ChickenSale, Expense
-from app.schemas.schemas import User
+from app.models.models import User as UserModel, ChickenIntake, ChickenSale, Expense
+from app.schemas.schemas import User as UserSchema
 from app.utils.dependencies import get_current_superuser
 
 router = APIRouter()
 
-@router.get("/users", response_model=List[User])
+@router.get("/users", response_model=List[UserSchema])
 async def get_all_users(
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    users = db.query(User).all()
+    users = db.query(UserModel).all()
     return users
 
 @router.put("/users/{user_id}/approve")
@@ -22,7 +22,7 @@ async def approve_user(
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -36,7 +36,7 @@ async def deactivate_user(
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -79,9 +79,9 @@ async def get_dashboard_stats(
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    total_users = db.query(User).filter(User.is_superuser == False).count()
-    approved_users = db.query(User).filter(User.is_approved == True, User.is_superuser == False).count()
-    pending_users = db.query(User).filter(User.is_approved == False, User.is_superuser == False).count()
+    total_users = db.query(UserModel).filter(UserModel.is_superuser == False).count()
+    approved_users = db.query(UserModel).filter(UserModel.is_approved == True, UserModel.is_superuser == False).count()
+    pending_users = db.query(UserModel).filter(UserModel.is_approved == False, UserModel.is_superuser == False).count()
 
     total_intakes = db.query(ChickenIntake).count()
     total_sales = db.query(ChickenSale).count()

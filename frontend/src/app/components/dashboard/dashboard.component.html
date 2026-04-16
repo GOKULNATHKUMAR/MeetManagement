@@ -8,6 +8,17 @@
   </header>
 
   <mat-grid-list cols="2" rowHeight="200px" class="dashboard-grid">
+    <!-- Admin Panel (Super User Only) -->
+    <mat-grid-tile *ngIf="isSuperUser">
+      <mat-card class="dashboard-card admin-card" (click)="navigateToAdmin()">
+        <mat-card-content>
+          <mat-icon class="card-icon">admin_panel_settings</mat-icon>
+          <h3>Admin Panel</h3>
+          <p>Manage users and system settings</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+
     <!-- Chicken Intake -->
     <mat-grid-tile>
       <mat-card class="dashboard-card" (click)="navigateToIntake()">
@@ -48,17 +59,6 @@
           <mat-icon class="card-icon">analytics</mat-icon>
           <h3>Reports</h3>
           <p>Generate reports and analytics</p>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-
-    <!-- Admin Panel (only for super users) -->
-    <mat-grid-tile *ngIf="isSuperUser">
-      <mat-card class="dashboard-card admin-card" (click)="navigateToAdmin()">
-        <mat-card-content>
-          <mat-icon class="card-icon">admin_panel_settings</mat-icon>
-          <h3>Admin Panel</h3>
-          <p>Manage users and system settings</p>
         </mat-card-content>
       </mat-card>
     </mat-grid-tile>

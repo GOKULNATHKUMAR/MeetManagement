@@ -35,7 +35,7 @@ export class AuthService {
   constructor(private apiService: ApiService) {
     const token = localStorage.getItem('token');
     if (token) {
-      // TODO: Validate token and get user info
+      this.loadCurrentUser();
     }
   }
 
@@ -43,9 +43,17 @@ export class AuthService {
     return this.apiService.post<Token>('/auth/login', credentials).pipe(
       tap(response => {
         localStorage.setItem('token', response.access_token);
-        // TODO: Get user info after login
       })
     );
+  }
+
+  loadCurrentUser(): Observable<User> {
+    const user$ = this.apiService.get<User>('/auth/me');
+    user$.subscribe({
+      next: (user) => this.currentUserSubject.next(user),
+      error: () => this.currentUserSubject.next(null)
+    });
+    return user$;
   }
 
   register(userData: any): Observable<User> {
