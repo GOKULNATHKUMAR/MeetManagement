@@ -27,6 +27,7 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   loginForm: FormGroup;
   isLoading = false;
+  loginError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -42,6 +43,7 @@ export class LoginComponent {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
+      this.loginError = null;
       this.isLoading = true;
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
@@ -53,13 +55,24 @@ export class LoginComponent {
             },
             error: () => {
               this.isLoading = false;
-              this.snackBar.open('Unable to load user profile.', 'Close', { duration: 3000 });
+              this.loginError = 'Unable to load user profile. Please try again.';
+              this.snackBar.open(this.loginError, 'Close', { duration: 5000 });
             }
           });
         },
         error: (error) => {
           this.isLoading = false;
-          this.snackBar.open('Login failed. Please check your credentials.', 'Close', { duration: 3000 });
+          const detail = error?.error?.detail || '';
+          if (detail === 'Account not approved yet') {
+            this.loginError = 'Your account is pending admin approval. Please wait for approval before logging in.';
+          } else if (detail === 'Inactive user') {
+            this.loginError = 'Your account is inactive. Please contact the administrator.';
+          } else {
+            this.loginError = 'Login failed. Please check your username and password.';
+          }
+          if (this.loginError) {
+            this.snackBar.open(this.loginError, 'Close', { duration: 5000 });
+          }
         }
       });
     }
