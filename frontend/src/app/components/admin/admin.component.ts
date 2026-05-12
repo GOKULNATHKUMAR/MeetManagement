@@ -140,6 +140,19 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  activateUser(user: User): void {
+    this.adminService.activateUser(user.id).subscribe({
+      next: () => {
+        this.snackBar.open(`User ${user.username} activated successfully`, 'Close', { duration: 3000 });
+        this.loadUsers();
+      },
+      error: (error) => {
+        console.error('Error activating user:', error);
+        this.snackBar.open('Error activating user', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
   getUserStatus(user: User): string {
     if (!user.is_active) return 'Inactive';
     if (!user.is_approved) return 'Pending Approval';

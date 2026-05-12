@@ -34,6 +34,10 @@ export class AdminService {
     return this.apiService.put(`/admin/users/${userId}/deactivate`, {});
   }
 
+  activateUser(userId: number): Observable<any> {
+    return this.apiService.put(`/admin/users/${userId}/activate`, {});
+  }
+
   getAllIntakes(): Observable<any[]> {
     return this.apiService.get<any[]>('/admin/intakes/all');
   }

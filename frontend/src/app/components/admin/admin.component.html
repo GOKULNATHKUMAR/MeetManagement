@@ -89,11 +89,17 @@
                         <mat-icon>check_circle</mat-icon>
                         Approve
                       </button>
-                      <button *ngIf="user.is_active && !user.is_superuser"
+                      <button *ngIf="user.is_active && user.is_approved && !user.is_superuser"
                               mat-raised-button color="warn"
                               (click)="deactivateUser(user)">
                         <mat-icon>block</mat-icon>
                         Deactivate
+                      </button>
+                      <button *ngIf="!user.is_active && user.is_approved && !user.is_superuser"
+                              mat-raised-button color="primary"
+                              (click)="activateUser(user)">
+                        <mat-icon>check_circle</mat-icon>
+                        Activate
                       </button>
                     </div>
                   </td>
