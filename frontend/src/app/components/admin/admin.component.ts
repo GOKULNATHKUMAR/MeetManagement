@@ -9,7 +9,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
-import { AdminService, User } from '../../services/admin.service';
+import { AdminService, User, ChickenIntakeWithOwner, ChickenSaleWithOwner, ExpenseWithOwner } from '../../services/admin.service';
 
 @Component({
   selector: 'app-admin',
@@ -30,9 +30,9 @@ import { AdminService, User } from '../../services/admin.service';
 })
 export class AdminComponent implements OnInit {
   users: User[] = [];
-  intakes: any[] = [];
-  sales: any[] = [];
-  expenses: any[] = [];
+  intakes: ChickenIntakeWithOwner[] = [];
+  sales: ChickenSaleWithOwner[] = [];
+  expenses: ExpenseWithOwner[] = [];
 
   loadingUsers = false;
   loadingIntakes = false;

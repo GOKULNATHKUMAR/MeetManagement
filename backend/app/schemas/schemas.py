@@ -74,6 +74,27 @@ class ChickenIntake(ChickenIntakeBase):
     class Config:
         from_attributes = True
 
+# Admin view schemas with owner details
+class UserBasic(BaseModel):
+    id: int
+    full_name: str
+    email: str
+    username: str
+
+    class Config:
+        from_attributes = True
+
+class ChickenIntakeWithOwner(ChickenIntakeBase):
+    id: int
+    owner_id: int
+    owner: UserBasic
+    intake_date: datetime
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
 # Chicken Sale schemas
 class ChickenSaleBase(BaseModel):
     quantity: float
@@ -103,6 +124,17 @@ class ChickenSale(ChickenSaleBase):
     class Config:
         from_attributes = True
 
+class ChickenSaleWithOwner(ChickenSaleBase):
+    id: int
+    owner_id: int
+    owner: UserBasic
+    sale_date: datetime
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
 # Expense schemas
 class ExpenseBase(BaseModel):
     category: str
@@ -121,6 +153,17 @@ class ExpenseUpdate(BaseModel):
 class Expense(ExpenseBase):
     id: int
     owner_id: int
+    expense_date: datetime
+    created_at: datetime
+    updated_at: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+
+class ExpenseWithOwner(ExpenseBase):
+    id: int
+    owner_id: int
+    owner: UserBasic
     expense_date: datetime
     created_at: datetime
     updated_at: Optional[datetime]
