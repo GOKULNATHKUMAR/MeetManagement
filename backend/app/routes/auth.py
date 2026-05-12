@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from datetime import timedelta
 from app.database import get_db
 from app.models.models import User as UserModel
-from app.schemas.schemas import UserCreate, User as UserSchema, LoginRequest, Token
+from app.schemas.schemas import UserCreate, User as UserSchema, LoginRequest, Token, UserUpdate
 from app.utils.auth import authenticate_user, create_access_token, get_password_hash, verify_password, ACCESS_TOKEN_EXPIRE_MINUTES
 from app.utils.dependencies import get_current_active_user, get_current_superuser
 
@@ -60,6 +60,23 @@ async def login_for_access_token(
 async def get_current_user_info(
     current_user: UserModel = Depends(get_current_active_user)
 ):
+    return current_user
+
+@router.put("/me", response_model=UserSchema)
+async def update_current_user(
+    user_update: UserUpdate,
+    current_user: UserModel = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    # Update user fields
+    for field, value in user_update.dict(exclude_unset=True).items():
+        if field == "password":
+            setattr(current_user, "hashed_password", get_password_hash(value))
+        else:
+            setattr(current_user, field, value)
+    
+    db.commit()
+    db.refresh(current_user)
     return current_user
 
 @router.post("/reset-password")

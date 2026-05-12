@@ -68,15 +68,19 @@ async def send_daily_telegram_report(
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
+    # Use user's telegram settings, fallback to global if not set
+    bot_token = current_user.telegram_bot_token or TELEGRAM_BOT_TOKEN
+    chat_id = current_user.telegram_chat_id or TELEGRAM_CHAT_ID
+
     invalid_telegram_config = any(
         value in ("", "your-telegram-bot-token", "your-telegram-chat-id")
-        for value in (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
+        for value in (bot_token, chat_id)
     )
 
     if invalid_telegram_config:
         raise HTTPException(
-            status_code=500,
-            detail="Telegram configuration not set up. Replace Telegram placeholder values in backend/.env with your actual bot token and chat ID."
+            status_code=400,
+            detail="Telegram configuration not set up. Please configure your Telegram bot token and chat ID in your profile settings."
         )
 
     report = await get_daily_report(report_date, current_user, db)
@@ -91,9 +95,9 @@ async def send_daily_telegram_report(
 _Generated for {current_user.full_name}_"""
 
     try:
-        telegram_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        telegram_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         payload = {
-            "chat_id": TELEGRAM_CHAT_ID,
+            "chat_id": chat_id,
             "text": message,
             "parse_mode": "Markdown"
         }

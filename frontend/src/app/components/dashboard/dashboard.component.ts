@@ -48,6 +48,10 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/reports']);
   }
 
+  navigateToProfile(): void {
+    this.router.navigate(['/profile']);
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
