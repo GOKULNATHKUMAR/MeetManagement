@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
+import { Router } from '@angular/router';
 import { AdminService, User } from '../../services/admin.service';
 
 @Component({
@@ -45,7 +46,8 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -152,6 +154,10 @@ export class AdminComponent implements OnInit {
 
   getUserRole(user: User): string {
     return user.is_superuser ? 'Super Admin' : 'Shop Owner';
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   formatCurrency(amount: number): string {

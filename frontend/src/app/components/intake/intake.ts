@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { IntakeService, ChickenIntake, IntakeCreate, IntakeUpdate } from '../../services/intake.service';
 import { EditIntakeDialogComponent } from './edit-intake-dialog.component';
@@ -48,7 +49,8 @@ export class Intake implements OnInit {
     private fb: FormBuilder,
     private intakeService: IntakeService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {
     this.intakeForm = this.fb.group({
       quantity: ['', [Validators.required, Validators.min(1)]],
@@ -162,6 +164,10 @@ export class Intake implements OnInit {
         });
       }
     });
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   getErrorMessage(fieldName: string): string {

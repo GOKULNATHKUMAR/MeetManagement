@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { SalesService, ChickenSale, SaleCreate, SaleUpdate } from '../../services/sales.service';
 import { EditSalesDialogComponent } from './edit-sales-dialog.component';
@@ -49,7 +50,8 @@ export class Sales implements OnInit {
     private fb: FormBuilder,
     private salesService: SalesService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {
     this.saleForm = this.fb.group({
       quantity: ['', [Validators.required, Validators.min(1)]],
@@ -162,6 +164,10 @@ export class Sales implements OnInit {
         }
       });
     }
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   getErrorMessage(fieldName: string): string {

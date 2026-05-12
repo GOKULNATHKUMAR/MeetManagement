@@ -13,6 +13,7 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSelectModule } from '@angular/material/select';
+import { Router } from '@angular/router';
 import { ReportsService, DailyReport, MonthlyReport } from '../../services/reports.service';
 
 @Component({
@@ -72,7 +73,8 @@ export class ReportsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private reportsService: ReportsService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     this.dailyForm = this.fb.group({
       date: [new Date(), Validators.required]
@@ -173,6 +175,10 @@ export class ReportsComponent implements OnInit {
         }
       });
     }
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   formatCurrency(amount: number): string {
