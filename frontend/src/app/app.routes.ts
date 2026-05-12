@@ -6,12 +6,14 @@ import { Sales } from './components/sales/sales';
 import { Expenses } from './components/expenses/expenses';
 import { ReportsComponent } from './components/reports/reports.component';
 import { AdminComponent } from './components/admin/admin.component';
+import { RegisterComponent } from './components/register/register.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'intake', component: Intake, canActivate: [AuthGuard] }, // Intake management
   { path: 'sales', component: Sales, canActivate: [AuthGuard] }, // Sales management

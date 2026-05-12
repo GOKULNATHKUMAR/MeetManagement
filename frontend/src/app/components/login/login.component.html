@@ -29,6 +29,10 @@
           <span *ngIf="!isLoading">Login</span>
         </button>
       </form>
+
+      <div *ngIf="loginError" class="login-error">
+        {{ loginError }}
+      </div>
     </mat-card-content>
 
     <mat-card-actions>
