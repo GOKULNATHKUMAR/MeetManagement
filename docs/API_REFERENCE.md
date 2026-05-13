@@ -11,6 +11,7 @@ Content-Type: application/json
   "email": "user@example.com",
   "username": "username",
   "full_name": "Full Name",
+  "shop_name": "My Chicken Shop",
   "password": "securepassword"
 }
 
@@ -20,6 +21,7 @@ Response (201):
   "email": "user@example.com",
   "username": "username",
   "full_name": "Full Name",
+  "shop_name": "My Chicken Shop",
   "is_active": true,
   "is_superuser": false,
   "is_approved": false,
@@ -81,6 +83,58 @@ Authorization: Bearer {token}
 Response (200):
 {
   "message": "User rejected and removed"
+}
+```
+
+### Get Current User Profile
+```
+GET /api/auth/me
+Authorization: Bearer {token}
+
+Response (200):
+{
+  "id": 1,
+  "email": "user@example.com",
+  "username": "username",
+  "full_name": "Full Name",
+  "shop_name": "My Chicken Shop",
+  "telegram_bot_token": "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz",
+  "telegram_chat_id": "123456789",
+  "is_active": true,
+  "is_superuser": false,
+  "is_approved": true,
+  "created_at": "2024-04-07T10:30:00Z",
+  "updated_at": "2024-04-07T11:00:00Z"
+}
+```
+
+### Update Current User Profile
+```
+PUT /api/auth/me
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "full_name": "Updated Full Name",
+  "shop_name": "Updated Shop Name",
+  "telegram_bot_token": "new_bot_token",
+  "telegram_chat_id": "new_chat_id"
+}
+
+Response (200):
+{
+  "id": 1,
+  "email": "user@example.com",
+  "username": "username",
+  "full_name": "Updated Full Name",
+  "shop_name": "Updated Shop Name",
+  "telegram_bot_token": "new_bot_token",
+  "telegram_chat_id": "new_chat_id",
+  "is_active": true,
+  "is_superuser": false,
+  "is_approved": true,
+  "created_at": "2024-04-07T10:30:00Z",
+  "updated_at": "2024-04-07T11:00:00Z"
 }
 ```
 
@@ -480,6 +534,9 @@ Response (200):
     "email": "user@example.com",
     "username": "username",
     "full_name": "Full Name",
+    "shop_name": "My Chicken Shop",
+    "telegram_bot_token": "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz",
+    "telegram_chat_id": "123456789",
     "is_active": true,
     "is_superuser": false,
     "is_approved": true,
@@ -512,24 +569,33 @@ Response (200):
 
 ### Get All Intakes (System-wide)
 ```
-GET /api/admin/intakes/all
+GET /api/admin/intakes/all?owner_id={user_id}
 Authorization: Bearer {token} (Super User only)
+
+Query Parameters:
+- owner_id (optional): Filter intakes by specific user ID
 
 Response (200): Array of intake records with owner information
 ```
 
 ### Get All Sales (System-wide)
 ```
-GET /api/admin/sales/all
+GET /api/admin/sales/all?owner_id={user_id}
 Authorization: Bearer {token} (Super User only)
+
+Query Parameters:
+- owner_id (optional): Filter sales by specific user ID
 
 Response (200): Array of sales records with owner information
 ```
 
 ### Get All Expenses (System-wide)
 ```
-GET /api/admin/expenses/all
+GET /api/admin/expenses/all?owner_id={user_id}
 Authorization: Bearer {token} (Super User only)
+
+Query Parameters:
+- owner_id (optional): Filter expenses by specific user ID
 
 Response (200): Array of expense records with owner information
 ```

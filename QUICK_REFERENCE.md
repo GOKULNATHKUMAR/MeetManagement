@@ -143,19 +143,37 @@
 - View all business data
 - Admin controls
 
----
+### 7. Shop Name Registration & Display ✅
+- Shop name collection during registration
+- Display shop name on dashboard after login
+- Editable in user profile
+
+### 8. Per-User Telegram Settings ✅
+- Individual bot token and chat ID per user
+- System-wide fallback for super admin
+- Configurable via profile settings
+
+### 9. Owner Name Columns in Lists ✅
+- Owner name displayed in intake, sales, expenses lists
+- Shows data ownership clearly
+- Admin can filter by owner
+
+### 10. Admin User-Wise Filtering ✅
+- Admin panel filters data by selected user
+- Maintains data isolation while allowing oversight
+- User-specific report generation
 
 ## API ENDPOINTS (42 Total)
 
 | Module | Endpoints | Status |
 |--------|-----------|--------|
-| Auth | 5 endpoints | ✅ Ready |
+| Auth | 6 endpoints | ✅ Ready |
 | Intake | 5 endpoints | ✅ Ready |
 | Sales | 5 endpoints | ✅ Ready |
 | Expenses | 5 endpoints | ✅ Ready |
 | Reports | 4 endpoints | ✅ Ready |
 | Admin | 8 endpoints | ✅ Ready |
-| **Total** | **32 endpoints** | **✅ All Ready** |
+| **Total** | **33 endpoints** | **✅ All Ready** |
 
 ---
 
@@ -166,13 +184,14 @@
 - [ ] Install Node.js & npm
 - [ ] Install PostgreSQL
 - [ ] Create database: `chicken_shop_db`
-- [ ] Configure `.env` file in backend
+- [ ] Configure `.env` file in backend (including Telegram defaults)
 - [ ] Run: `pip install -r requirements.txt`
 - [ ] Run: `npm install`
 - [ ] Start backend: `uvicorn app.main:app --reload`
 - [ ] Start frontend: `npm start`
 - [ ] Visit: http://localhost:4200
-- [ ] Test login/register flow
+- [ ] Test login/register flow (with shop name)
+- [ ] Configure personal Telegram settings in profile
 - [ ] Add sample data
 - [ ] Generate reports
 - [ ] Deploy to Railway/Render
@@ -288,8 +307,12 @@
 Project is ready when all these work:
 - ✅ Backend API starts without errors
 - ✅ Frontend loads at localhost:4200
-- ✅ Can register new user
+- ✅ Can register new user (with shop name)
 - ✅ Can login with credentials
+- ✅ Shop name displays on dashboard
+- ✅ Can configure Telegram settings in profile
+- ✅ Owner names show in intake/sales/expenses lists
+- ✅ Admin can filter data by user
 - ✅ Can add/edit/delete data
 - ✅ Can generate reports
 - ✅ PDF export works

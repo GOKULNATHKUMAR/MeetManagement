@@ -35,7 +35,7 @@ Your Chicken Shop Management System is ready for development and testing.
 ## Project Statistics
 
 - **Backend Files**: 15+ Python files
-- **Frontend Files**: 20+ TypeScript/HTML/SCSS files
+- **Frontend Files**: 25+ TypeScript/HTML/SCSS files (including Profile and Register components)
 - **Documentation Files**: 5+ markdown files
 - **Total Dependencies**: ~50 packages
 
@@ -118,12 +118,34 @@ npm start
 - System-wide view of all data
 - Dashboard statistics
 
+### Shop Name Personalization ✅
+- Shop name collection during registration
+- Display on dashboard after login
+- Editable in user profile
+
+### Per-User Telegram Settings ✅
+- Individual bot token and chat ID per user
+- System-wide fallback for super admin
+- Configurable via profile settings
+
+### Owner Name Display ✅
+- Owner name columns in intake/sales/expenses lists
+- Clear data ownership visibility
+- Supports admin oversight
+
+### Admin User-Wise Filtering ✅
+- Admin panel filters data by selected user
+- Maintains data isolation with admin access
+- User-specific report generation
+
 ## API Endpoints Summary
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
 | POST | /api/auth/register | Register new user |
 | POST | /api/auth/login | User login |
+| GET | /api/auth/me | Get current user profile |
+| PUT | /api/auth/me | Update current user profile |
 | POST | /api/intake/ | Add intake |
 | GET | /api/intake/ | List intakes |
 | PUT | /api/intake/{id} | Update intake |
@@ -140,6 +162,9 @@ npm start
 | GET | /api/reports/monthly/{year}/{month} | Monthly report |
 | GET | /api/reports/monthly/pdf/{year}/{month} | PDF report |
 | GET | /api/admin/users | All users (admin) |
+| GET | /api/admin/intakes/all?owner_id={id} | All intakes with filtering (admin) |
+| GET | /api/admin/sales/all?owner_id={id} | All sales with filtering (admin) |
+| GET | /api/admin/expenses/all?owner_id={id} | All expenses with filtering (admin) |
 | GET | /api/admin/dashboard/stats | Stats (admin) |
 
 ## Technology Stack Confirmed
@@ -158,18 +183,21 @@ npm start
 
 ## Database Tables Created
 
-- `users` - Store user profiles and authentication
-- `chicken_intakes` - Track chicken purchases/intakes
-- `chicken_sales` - Record sales transactions
-- `expenses` - Log business expenses
+- `users` - Store user profiles, authentication, shop name, and Telegram settings
+- `chicken_intakes` - Track chicken purchases/intakes with owner relations
+- `chicken_sales` - Record sales transactions with owner relations
+- `expenses` - Log business expenses with owner relations
 
 ## Next Steps
 
 ### Immediate (This Week)
 1. [ ] Set up PostgreSQL database
 2. [ ] Create super admin user manually
-3. [ ] Test authentication flow
-4. [ ] Test all CRUD operations via API docs
+3. [ ] Test authentication flow with shop name
+4. [ ] Test profile update with Telegram settings
+5. [ ] Test all CRUD operations via API docs
+6. [ ] Verify owner name display in lists
+7. [ ] Test admin user-wise filtering
 
 ### Short-term (Next Week)
 1. [ ] Complete frontend components
@@ -275,9 +303,12 @@ A: 4200 (can change with --port flag in ng serve)
 Your setup is complete when:
 ✅ Backend API starts without errors
 ✅ Frontend loads without errors
-✅ You can register a new user
+✅ You can register a new user (with shop name)
 ✅ Super admin can approve users
-✅ You can login with approved account
+✅ You can login with approved account - shop name displays on dashboard
+✅ You can update profile with Telegram settings
+✅ Owner names show in intake/sales/expenses lists
+✅ Admin can filter data by user
 ✅ You can add/edit/delete intake records
 ✅ You can add/edit/delete sales records
 ✅ You can add/edit/delete expenses

@@ -105,6 +105,7 @@ alembic upgrade head
        "email": "owner@shop.com",
        "username": "shopowner1",
        "full_name": "Shop Owner Name",
+       "shop_name": "My Chicken Shop",
        "password": "secure_password"
      }'
    ```
@@ -233,16 +234,38 @@ curl -X POST http://localhost:8000/api/reports/daily/whatsapp/2024-04-07 \
 - `GET /api/admin/users` - Get all users
 - `PUT /api/admin/users/{user_id}/approve` - Approve user
 - `PUT /api/admin/users/{user_id}/deactivate` - Deactivate user
-- `GET /api/admin/intakes/all` - View all intakes
-- `GET /api/admin/sales/all` - View all sales
-- `GET /api/admin/expenses/all` - View all expenses
+- `GET /api/admin/intakes/all?owner_id={user_id}` - View all intakes (filter by user)
+- `GET /api/admin/sales/all?owner_id={user_id}` - View all sales (filter by user)
+- `GET /api/admin/expenses/all?owner_id={user_id}` - View all expenses (filter by user)
 - `GET /api/admin/dashboard/stats` - Dashboard statistics
+
+### 7. Profile Management ✅
+**Status**: Profile update and Telegram settings ready
+
+**API Endpoints**:
+- `GET /api/auth/me` - Get current user profile
+- `PUT /api/auth/me` - Update profile including shop name and Telegram settings
+
+**Example - Update Profile**:
+```bash
+curl -X PUT http://localhost:8000/api/auth/me \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "full_name": "Updated Shop Owner Name",
+    "shop_name": "My Updated Chicken Shop",
+    "telegram_bot_token": "1234567890:ABCdefGHIjklMNOpqrsTUVwxyz",
+    "telegram_chat_id": "123456789"
+  }'
+```
 
 ## Frontend Development
 
 ### Components Completed
 - Login Component ✅
+- Register Component ✅
 - Dashboard Component ✅
+- Profile Component ✅
 
 ### Components To Implement
 - Intake Management (List, Add, Edit, Delete)

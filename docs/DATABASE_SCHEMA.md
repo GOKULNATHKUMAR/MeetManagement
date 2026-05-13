@@ -26,6 +26,9 @@ Users (1) ──── (Many) ChickenIntake
 | email | VARCHAR(255) | UNIQUE, NOT NULL | User email address |
 | username | VARCHAR(50) | UNIQUE, NOT NULL | Login username |
 | full_name | VARCHAR(100) | NOT NULL | User's full name |
+| shop_name | VARCHAR(100) | NULL | Shop/business name |
+| telegram_bot_token | VARCHAR(255) | NULL | Telegram bot token for notifications |
+| telegram_chat_id | VARCHAR(50) | NULL | Telegram chat ID for notifications |
 | hashed_password | VARCHAR(255) | NOT NULL | Bcrypt hashed password |
 | is_active | BOOLEAN | DEFAULT TRUE | Account active status |
 | is_superuser | BOOLEAN | DEFAULT FALSE | Super admin privileges |
@@ -145,6 +148,12 @@ Profit/Loss = Total Sales Revenue - Total Intake Cost - Total Expenses
 - Created all 4 main tables
 - Added indexes for performance
 - Set up foreign key relationships
+
+### Shop Name and Telegram Fields Migration (c7a5d4e2b1f3)
+- Added `shop_name` column to users table
+- Added `telegram_bot_token` column to users table
+- Added `telegram_chat_id` column to users table
+- Updated user registration and profile management
 
 ### Future Migrations
 - Admin actions table

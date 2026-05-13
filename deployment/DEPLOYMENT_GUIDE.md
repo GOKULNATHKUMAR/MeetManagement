@@ -133,6 +133,25 @@ TWILIO_PHONE_NUMBER=+1234567890
 WHATSAPP_NUMBER=+recipient_number
 ```
 
+## Telegram Integration Setup
+
+### System Default Configuration:
+For super admin fallback notifications, add to environment variables:
+```
+TELEGRAM_BOT_TOKEN=your_system_bot_token
+TELEGRAM_CHAT_ID=your_system_chat_id
+```
+
+### User-Specific Configuration:
+Users can configure their own Telegram settings via the profile page after registration.
+
+### Bot Creation Steps:
+1. Message @BotFather on Telegram
+2. Use `/newbot` command
+3. Follow prompts to create bot and get token
+4. Start a chat with your bot
+5. Send a message to get the chat ID (use @userinfobot or API calls)
+
 ## Domain Setup
 
 ### Free Options:

@@ -115,7 +115,25 @@ npm start
   - PDF export functionality
   - WhatsApp notification integration (Twilio ready)
 
-### Frontend Components (In Progress)
+✅ **7. Shop Name Personalization** - User branding
+  - Shop name collection during registration
+  - Display on dashboard after login
+  - Editable in profile settings
+
+✅ **8. Per-User Telegram Notifications** - Personalized alerts
+  - Individual bot token and chat ID per user
+  - System-wide fallback for super admin
+  - Configurable via profile for custom notifications
+
+✅ **9. Owner Name Display** - Data ownership visibility
+  - Owner name column in intake, sales, expenses lists
+  - Clear identification of data ownership
+  - Supports admin oversight
+
+✅ **10. Admin User-Wise Filtering** - Granular admin access
+  - Admin panel filters data by selected user
+  - Maintains data isolation with admin privileges
+  - User-specific report generation and management
 
 ✅ **Login Component** - Fully functional
   - User registration
@@ -178,6 +196,8 @@ MeetManagement/
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user profile
+- `PUT /api/auth/me` - Update current user profile
 - `GET /api/auth/pending-approvals` - (Admin) List pending users
 - `PUT /api/auth/approve-user/{id}` - (Admin) Approve user
 
@@ -229,6 +249,7 @@ POST http://localhost:8000/api/auth/register
   "email": "owner@shop.com",
   "username": "shopowner",
   "full_name": "Shop Owner",
+  "shop_name": "My Chicken Shop",
   "password": "password123"
 }
 ```

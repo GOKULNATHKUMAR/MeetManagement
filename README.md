@@ -29,7 +29,25 @@ A comprehensive web application for chicken shop owners to manage their business
 - Full CRUD operations for expense records
 - Categorize and monitor spending
 
-### 7. Admin Panel (Super Users Only)
+### 6. Shop Name Personalization
+- Shop name collection during registration
+- Display shop name on dashboard after login
+- Editable in user profile settings
+
+### 7. Per-User Telegram Notifications
+- Individual Telegram bot token and chat ID per user
+- System-wide fallback settings for super admin
+- Configurable via profile for personalized notifications
+
+### 8. Owner Name Display in Lists
+- Owner name column in intake, sales, and expenses lists
+- Clear data ownership visibility
+- Supports admin oversight
+
+### 9. Admin User-Wise Filtering
+- Admin panel filters data by selected user
+- Maintains data isolation with admin access
+- User-specific report generation and management
 - **User Management**: Approve/reject new user registrations
 - **System Oversight**: View all users, intakes, sales, and expenses across the system
 - **Account Control**: Activate/deactivate user accounts
