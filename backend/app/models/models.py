@@ -14,6 +14,9 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     is_approved = Column(Boolean, default=False)  # For shop owner approval
+    telegram_bot_token = Column(String, nullable=True)  # User's Telegram bot token
+    telegram_chat_id = Column(String, nullable=True)    # User's Telegram chat ID
+    shop_name = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

@@ -8,9 +8,12 @@ export interface User {
   email: string;
   username: string;
   full_name: string;
+  shop_name?: string;
   is_active: boolean;
   is_superuser: boolean;
   is_approved: boolean;
+  telegram_bot_token?: string;
+  telegram_chat_id?: string;
   created_at: string;
   updated_at?: string;
 }
@@ -58,6 +61,12 @@ export class AuthService {
 
   register(userData: any): Observable<User> {
     return this.apiService.post<User>('/auth/register', userData);
+  }
+
+  updateUser(userData: Partial<User>): Observable<User> {
+    return this.apiService.put<User>('/auth/me', userData).pipe(
+      tap(user => this.currentUserSubject.next(user))
+    );
   }
 
   logout(): void {

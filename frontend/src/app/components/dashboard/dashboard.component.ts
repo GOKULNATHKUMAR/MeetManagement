@@ -22,6 +22,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class DashboardComponent implements OnInit {
   isSuperUser = false;
+  shopName = '';
 
   constructor(
     private authService: AuthService,
@@ -30,6 +31,8 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.isSuperUser = this.authService.isSuperUser();
+    const currentUser = this.authService.getCurrentUser();
+    this.shopName = currentUser?.shop_name || '';
   }
 
   navigateToIntake(): void {
@@ -46,6 +49,10 @@ export class DashboardComponent implements OnInit {
 
   navigateToReports(): void {
     this.router.navigate(['/reports']);
+  }
+
+  navigateToProfile(): void {
+    this.router.navigate(['/profile']);
   }
 
   logout(): void {

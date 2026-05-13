@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from typing import List
 import io
 import requests
@@ -12,7 +12,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib import colors
 from decouple import config
 from app.database import get_db
-from app.models.models import ChickenIntake, ChickenSale, Expense
+from app.models.models import ChickenIntake, ChickenSale, Expense, User as UserModel
 from app.schemas.schemas import DailyReport, MonthlyReport
 from app.utils.dependencies import get_current_approved_user
 
@@ -25,29 +25,39 @@ TELEGRAM_CHAT_ID = config("TELEGRAM_CHAT_ID", default="")
 @router.get("/daily/{report_date}", response_model=DailyReport)
 async def get_daily_report(
     report_date: date,
+    user_id: int = None,
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    # Get intakes for the day
-    intakes = db.query(ChickenIntake).filter(
-        ChickenIntake.owner_id == current_user.id,
+    report_owner_id = None if current_user.is_superuser else current_user.id
+    if current_user.is_superuser and user_id:
+        report_owner_id = user_id
+
+    end_date = report_date + timedelta(days=1)
+    filters = [
         ChickenIntake.intake_date >= report_date,
-        ChickenIntake.intake_date < report_date.replace(day=report_date.day + 1)
-    ).all()
+        ChickenIntake.intake_date < end_date
+    ]
+    if report_owner_id is not None:
+        filters.insert(0, ChickenIntake.owner_id == report_owner_id)
 
-    # Get sales for the day
-    sales = db.query(ChickenSale).filter(
-        ChickenSale.owner_id == current_user.id,
+    intakes = db.query(ChickenIntake).filter(*filters).all()
+
+    sales_filters = [
         ChickenSale.sale_date >= report_date,
-        ChickenSale.sale_date < report_date.replace(day=report_date.day + 1)
-    ).all()
+        ChickenSale.sale_date < end_date
+    ]
+    if report_owner_id is not None:
+        sales_filters.insert(0, ChickenSale.owner_id == report_owner_id)
+    sales = db.query(ChickenSale).filter(*sales_filters).all()
 
-    # Get expenses for the day
-    expenses = db.query(Expense).filter(
-        Expense.owner_id == current_user.id,
+    expense_filters = [
         Expense.expense_date >= report_date,
-        Expense.expense_date < report_date.replace(day=report_date.day + 1)
-    ).all()
+        Expense.expense_date < end_date
+    ]
+    if report_owner_id is not None:
+        expense_filters.insert(0, Expense.owner_id == report_owner_id)
+    expenses = db.query(Expense).filter(*expense_filters).all()
 
     total_intake = sum(intake.total_cost for intake in intakes)
     total_sales = sum(sale.total_revenue for sale in sales)
@@ -65,21 +75,32 @@ async def get_daily_report(
 @router.post("/daily/telegram/{report_date}")
 async def send_daily_telegram_report(
     report_date: date,
+    user_id: int = None,
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
+    target_user = current_user
+    if current_user.is_superuser and user_id is not None:
+        target_user = db.query(UserModel).filter(UserModel.id == user_id).first()
+        if target_user is None:
+            raise HTTPException(status_code=404, detail="Target user not found")
+
+    # Use user's telegram settings, fallback to global if not set
+    bot_token = target_user.telegram_bot_token or TELEGRAM_BOT_TOKEN
+    chat_id = target_user.telegram_chat_id or TELEGRAM_CHAT_ID
+
     invalid_telegram_config = any(
         value in ("", "your-telegram-bot-token", "your-telegram-chat-id")
-        for value in (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)
+        for value in (bot_token, chat_id)
     )
 
     if invalid_telegram_config:
         raise HTTPException(
-            status_code=500,
-            detail="Telegram configuration not set up. Replace Telegram placeholder values in backend/.env with your actual bot token and chat ID."
+            status_code=400,
+            detail="Telegram configuration not set up. Please configure your Telegram bot token and chat ID in your profile settings."
         )
 
-    report = await get_daily_report(report_date, current_user, db)
+    report = await get_daily_report(report_date, user_id, current_user, db)
 
     message = f"""📊 *Daily Report - {report.date}*
 
@@ -88,12 +109,12 @@ async def send_daily_telegram_report(
 💸 *Total Expenses:* ₹{report.total_expenses:.2f}
 📈 *Profit/Loss:* ₹{report.profit_loss:.2f}
 
-_Generated for {current_user.full_name}_"""
+_Generated for {target_user.full_name}_"""
 
     try:
-        telegram_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        telegram_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         payload = {
-            "chat_id": TELEGRAM_CHAT_ID,
+            "chat_id": chat_id,
             "text": message,
             "parse_mode": "Markdown"
         }
@@ -108,6 +129,7 @@ _Generated for {current_user.full_name}_"""
 def get_monthly_report(
     year: int,
     month: int,
+    user_id: int = None,
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
@@ -118,23 +140,31 @@ def get_monthly_report(
         end_date = date(year, month + 1, 1)
 
     # Get all data for the month
-    intakes = db.query(ChickenIntake).filter(
-        ChickenIntake.owner_id == current_user.id,
+    report_owner_id = None if current_user.is_superuser else current_user.id
+    if current_user.is_superuser and user_id:
+        report_owner_id = user_id
+
+    intake_query = db.query(ChickenIntake).filter(
         ChickenIntake.intake_date >= start_date,
         ChickenIntake.intake_date < end_date
-    ).all()
-
-    sales = db.query(ChickenSale).filter(
-        ChickenSale.owner_id == current_user.id,
+    )
+    sales_query = db.query(ChickenSale).filter(
         ChickenSale.sale_date >= start_date,
         ChickenSale.sale_date < end_date
-    ).all()
-
-    expenses = db.query(Expense).filter(
-        Expense.owner_id == current_user.id,
+    )
+    expense_query = db.query(Expense).filter(
         Expense.expense_date >= start_date,
         Expense.expense_date < end_date
-    ).all()
+    )
+
+    if report_owner_id is not None:
+        intake_query = intake_query.filter(ChickenIntake.owner_id == report_owner_id)
+        sales_query = sales_query.filter(ChickenSale.owner_id == report_owner_id)
+        expense_query = expense_query.filter(Expense.owner_id == report_owner_id)
+
+    intakes = intake_query.all()
+    sales = sales_query.all()
+    expenses = expense_query.all()
 
     total_intake = sum(intake.total_cost for intake in intakes)
     total_sales = sum(sale.total_revenue for sale in sales)
@@ -172,10 +202,11 @@ def get_monthly_report(
 async def generate_monthly_pdf_report(
     year: int,
     month: int,
+    user_id: int = None,
     current_user = Depends(get_current_approved_user),
     db: Session = Depends(get_db)
 ):
-    report_data = get_monthly_report(year, month, current_user, db)
+    report_data = get_monthly_report(year, month, user_id, current_user, db)
 
     # Create PDF
     buffer = io.BytesIO()

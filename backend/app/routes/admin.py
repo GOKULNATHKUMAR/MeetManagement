@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 from app.database import get_db
 from app.models.models import User as UserModel, ChickenIntake, ChickenSale, Expense
-from app.schemas.schemas import User as UserSchema
+from app.schemas.schemas import User as UserSchema, ChickenIntakeWithOwner, ChickenSaleWithOwner, ExpenseWithOwner
 from app.utils.dependencies import get_current_superuser
 
 router = APIRouter()
@@ -44,34 +44,60 @@ async def deactivate_user(
     db.commit()
     return {"message": "User deactivated successfully"}
 
-@router.get("/intakes/all")
+@router.put("/users/{user_id}/activate")
+async def activate_user(
+    user_id: int,
+    current_user = Depends(get_current_superuser),
+    db: Session = Depends(get_db)
+):
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.is_active = True
+    db.commit()
+    return {"message": "User activated successfully"}
+
+@router.get("/intakes/all", response_model=List[ChickenIntakeWithOwner])
 async def get_all_intakes(
     skip: int = 0,
     limit: int = 100,
+    owner_id: int = None,
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    intakes = db.query(ChickenIntake).offset(skip).limit(limit).all()
+    query = db.query(ChickenIntake).options(joinedload(ChickenIntake.owner))
+    if owner_id is not None:
+        query = query.filter(ChickenIntake.owner_id == owner_id)
+    intakes = query.offset(skip).limit(limit).all()
     return intakes
 
-@router.get("/sales/all")
+@router.get("/sales/all", response_model=List[ChickenSaleWithOwner])
 async def get_all_sales(
     skip: int = 0,
     limit: int = 100,
+    owner_id: int = None,
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    sales = db.query(ChickenSale).offset(skip).limit(limit).all()
+    query = db.query(ChickenSale).options(joinedload(ChickenSale.owner))
+    if owner_id is not None:
+        query = query.filter(ChickenSale.owner_id == owner_id)
+    sales = query.offset(skip).limit(limit).all()
     return sales
 
-@router.get("/expenses/all")
+@router.get("/expenses/all", response_model=List[ExpenseWithOwner])
 async def get_all_expenses(
     skip: int = 0,
     limit: int = 100,
+    owner_id: int = None,
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    expenses = db.query(Expense).offset(skip).limit(limit).all()
+    query = db.query(Expense).options(joinedload(Expense.owner))
+    if owner_id is not None:
+        query = query.filter(Expense.owner_id == owner_id)
+    expenses = query.offset(skip).limit(limit).all()
     return expenses
 
 @router.get("/dashboard/stats")

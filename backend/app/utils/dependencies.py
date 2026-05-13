@@ -41,3 +41,11 @@ def get_current_approved_user(current_user: User = Depends(get_current_active_us
             detail="Account not approved yet"
         )
     return current_user
+
+def get_current_regular_user(current_user: User = Depends(get_current_approved_user)):
+    if current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Super admins should use the admin panel to manage data"
+        )
+    return current_user

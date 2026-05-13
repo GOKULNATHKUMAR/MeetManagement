@@ -29,6 +29,8 @@
 - [x] Intake, Sales, Expenses components
 - [x] Reports component with Telegram notifications
 - [x] **Admin panel component with user management**
+- [x] Profile component for user settings
+- [x] Register component with shop name field
 - [x] Routing configured
 - [x] Global styles
 
@@ -183,9 +185,12 @@ npm start
 | Frontend UI | Ready | `ng serve` |
 | Database Models | Ready | Test in API docs |
 | Authentication | Ready | Register & Login endpoints |
+| Profile Management | Ready | Update profile with shop name & Telegram |
 | CRUD Operations | Ready | Test all endpoints in docs |
 | Reports | Ready | Generate daily/monthly reports |
-| Admin Panel | Ready | Access /api/admin endpoints |
+| Admin Panel | Ready | Access /api/admin endpoints with filtering |
+| Owner Columns | Ready | Check owner display in lists |
+| Shop Name Display | Ready | Verify dashboard shows shop name |
 
 ## Known Limitations & Next Steps
 
@@ -197,7 +202,11 @@ npm start
 5. Automated email notifications not scheduled
 
 ### Priority Next Steps:
-1. [ ] Create remaining frontend components
+1. [ ] Test shop name registration and dashboard display
+2. [ ] Configure and test per-user Telegram settings
+3. [ ] Verify owner name columns in intake/sales/expenses lists
+4. [ ] Test admin user-wise filtering functionality
+5. [ ] Create remaining frontend components
 2. [ ] Integrate frontend forms with backend APIs
 3. [ ] Add comprehensive error handling
 4. [ ] Implement loading states and spinners
@@ -262,14 +271,16 @@ npm start
 
 Run this complete flow to validate:
 
-1. Register shop owner account
+1. Register shop owner account (with shop name)
 2. Login as super admin and approve account
-3. Login as shop owner
-4. Add intake record
-5. Add sales record
-6. Add expense record
-7. Generate daily report
-8. Generate monthly PDF report
-9. View admin dashboard (as super admin)
+3. Login as shop owner - verify shop name displays on dashboard
+4. Update profile with Telegram bot token and chat ID
+5. Add intake record - verify owner name shows in list
+6. Add sales record - verify owner name shows in list
+7. Add expense record - verify owner name shows in list
+8. Generate daily report
+9. Generate monthly PDF report
+10. View admin dashboard (as super admin) - test user-wise filtering
+11. Send report via Telegram (using user's settings)
 
 **All steps should complete successfully! ✅**

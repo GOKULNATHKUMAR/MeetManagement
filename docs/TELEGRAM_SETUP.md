@@ -3,9 +3,19 @@
 ## Overview
 This guide explains how to set up **free Telegram notifications** for your Chicken Shop Management System. Unlike paid services like Twilio WhatsApp, Telegram Bot API is completely free with no usage limits.
 
+**New Feature**: Each user can now configure their own Telegram bot for personalized notifications. Super admins can set system-wide defaults, while regular users can override with their personal settings.
+
 ## Prerequisites
 - Telegram account (download from App Store/Google Play)
 - Internet connection
+
+## Configuration Options
+
+### System-Wide Setup (Super Admin)
+Super administrators can set default Telegram credentials in the `.env` file that will be used as fallbacks when users haven't configured their personal settings.
+
+### User-Based Setup (All Users)
+Each user can configure their own Telegram bot in their profile settings for personalized notifications. This overrides the system defaults.
 
 ## Step 1: Create Your Telegram Bot
 
@@ -58,17 +68,25 @@ https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates
 ```
 Look for `"chat":{"id":123456789}` in the JSON response.
 
-## Step 3: Configure Environment Variables
+## Step 3: Configure Telegram Settings
 
-### 3.1 Update .env File
-Edit `backend/.env`:
+### 3.1 System-Wide Configuration (Super Admin Only)
+Edit `backend/.env` for system defaults:
 ```env
 # Telegram Bot Configuration (Free alternative to WhatsApp)
 TELEGRAM_BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrsTUVwxyz123456789
 TELEGRAM_CHAT_ID=123456789
 ```
 
-### 3.2 Restart Backend
+### 3.2 User-Based Configuration (All Users)
+1. Login to your account
+2. Go to Dashboard → Profile
+3. Fill in your personal Telegram Bot Token and Chat ID
+4. Save changes
+
+**Note**: User settings take priority over system defaults. If user settings are blank, system defaults will be used.
+
+### 3.3 Restart Backend (After System Changes)
 ```bash
 # Stop current backend (Ctrl+C)
 # Restart
@@ -77,7 +95,8 @@ cd backend && python -m uvicorn app.main:app --reload
 
 ## Step 4: Test Notifications
 
-### 4.1 Test from Command Line
+### 4.1 System-Wide Test (Command Line)
+To test system default settings:
 ```bash
 cd backend
 python -c "
@@ -88,7 +107,7 @@ chat_id = config('TELEGRAM_CHAT_ID')
 url = f'https://api.telegram.org/bot{token}/sendMessage'
 payload = {
     'chat_id': chat_id,
-    'text': '🐔 *Test from Chicken Shop System*\n\n✅ Telegram notifications working!',
+    'text': '🐔 *System Test from Chicken Shop*\n\n✅ System Telegram notifications working!',
     'parse_mode': 'Markdown'
 }
 response = requests.post(url, json=payload)
@@ -96,12 +115,19 @@ print('✅ Success!' if response.status_code == 200 else f'❌ Error: {response.
 "
 ```
 
-### 4.2 Test from Web Interface
-1. Login to your application
-2. Go to Reports → Daily Reports
-3. Select a date and generate report
-4. Click "Send via Telegram"
-5. Check your Telegram for the notification!
+### 4.2 User-Based Test (Web Interface)
+1. Login to your account
+2. Go to Profile and configure your Telegram bot (or leave blank for system defaults)
+3. Go to Reports → Daily Reports
+4. Select a date and generate report
+5. Click "Send via Telegram"
+6. Check your Telegram for the notification!
+
+### 4.3 Verify Configuration
+The system uses this priority:
+1. **User's Personal Settings** (if configured)
+2. **System Defaults** (from `.env` file)
+3. **Error** (if neither is set)
 
 ## Message Format
 

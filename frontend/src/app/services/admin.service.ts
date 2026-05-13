@@ -15,6 +15,53 @@ export interface User {
   updated_at?: string;
 }
 
+export interface UserBasic {
+  id: number;
+  full_name: string;
+  email: string;
+  username: string;
+}
+
+export interface ChickenIntakeWithOwner {
+  id: number;
+  owner_id: number;
+  owner: UserBasic;
+  quantity: number;
+  supplier: string;
+  cost_per_unit: number;
+  total_cost: number;
+  intake_date: string;
+  notes?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface ChickenSaleWithOwner {
+  id: number;
+  owner_id: number;
+  owner: UserBasic;
+  quantity: number;
+  price_per_unit: number;
+  total_revenue: number;
+  customer_name?: string;
+  sale_date: string;
+  notes?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface ExpenseWithOwner {
+  id: number;
+  owner_id: number;
+  owner: UserBasic;
+  category: string;
+  amount: number;
+  description?: string;
+  expense_date: string;
+  created_at: string;
+  updated_at?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,15 +81,22 @@ export class AdminService {
     return this.apiService.put(`/admin/users/${userId}/deactivate`, {});
   }
 
-  getAllIntakes(): Observable<any[]> {
-    return this.apiService.get<any[]>('/admin/intakes/all');
+  activateUser(userId: number): Observable<any> {
+    return this.apiService.put(`/admin/users/${userId}/activate`, {});
   }
 
-  getAllSales(): Observable<any[]> {
-    return this.apiService.get<any[]>('/admin/sales/all');
+  getAllIntakes(userId?: number): Observable<ChickenIntakeWithOwner[]> {
+    const query = userId ? `?owner_id=${userId}` : '';
+    return this.apiService.get<ChickenIntakeWithOwner[]>(`/admin/intakes/all${query}`);
   }
 
-  getAllExpenses(): Observable<any[]> {
-    return this.apiService.get<any[]>('/admin/expenses/all');
+  getAllSales(userId?: number): Observable<ChickenSaleWithOwner[]> {
+    const query = userId ? `?owner_id=${userId}` : '';
+    return this.apiService.get<ChickenSaleWithOwner[]>(`/admin/sales/all${query}`);
+  }
+
+  getAllExpenses(userId?: number): Observable<ExpenseWithOwner[]> {
+    const query = userId ? `?owner_id=${userId}` : '';
+    return this.apiService.get<ExpenseWithOwner[]>(`/admin/expenses/all${query}`);
   }
 }

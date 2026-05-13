@@ -1,5 +1,11 @@
 <div class="admin-container">
-  <h1>Admin Panel</h1>
+  <div class="page-header">
+    <h1>Admin Panel</h1>
+    <button mat-stroked-button color="accent" class="back-button" (click)="navigateToDashboard()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Dashboard
+    </button>
+  </div>
   <p class="admin-subtitle">Manage users, approvals, and system-wide data</p>
 
   <mat-tab-group>
@@ -83,11 +89,17 @@
                         <mat-icon>check_circle</mat-icon>
                         Approve
                       </button>
-                      <button *ngIf="user.is_active && !user.is_superuser"
+                      <button *ngIf="user.is_active && user.is_approved && !user.is_superuser"
                               mat-raised-button color="warn"
                               (click)="deactivateUser(user)">
                         <mat-icon>block</mat-icon>
                         Deactivate
+                      </button>
+                      <button *ngIf="!user.is_active && user.is_approved && !user.is_superuser"
+                              mat-raised-button color="primary"
+                              (click)="activateUser(user)">
+                        <mat-icon>check_circle</mat-icon>
+                        Activate
                       </button>
                     </div>
                   </td>
@@ -110,6 +122,19 @@
     <!-- System Data Tab -->
     <mat-tab label="System Data">
       <div class="tab-content">
+        <div class="filter-row">
+          <mat-form-field appearance="fill" class="owner-filter">
+            <mat-label>Filter by Owner</mat-label>
+            <mat-select [(value)]="selectedOwnerId">
+              <mat-option [value]="null">All Owners</mat-option>
+              <mat-option *ngFor="let user of users" [value]="user.id">{{ user.full_name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="loadIntakes(selectedOwnerId); loadSales(selectedOwnerId); loadExpenses(selectedOwnerId)">
+            <mat-icon>filter_list</mat-icon>
+            Apply Filter
+          </button>
+        </div>
         <div class="data-grid">
           <!-- All Intakes -->
           <mat-card class="data-card">
@@ -135,7 +160,7 @@
                   </ng-container>
                   <ng-container matColumnDef="owner">
                     <th mat-header-cell *matHeaderCellDef>Owner</th>
-                    <td mat-cell *matCellDef="let item">{{ item.owner?.username || 'N/A' }}</td>
+                    <td mat-cell *matCellDef="let item">{{ item.owner?.full_name || 'N/A' }}</td>
                   </ng-container>
                   <ng-container matColumnDef="supplier">
                     <th mat-header-cell *matHeaderCellDef>Supplier</th>
@@ -184,7 +209,7 @@
                   </ng-container>
                   <ng-container matColumnDef="owner">
                     <th mat-header-cell *matHeaderCellDef>Owner</th>
-                    <td mat-cell *matCellDef="let item">{{ item.owner?.username || 'N/A' }}</td>
+                    <td mat-cell *matCellDef="let item">{{ item.owner?.full_name || 'N/A' }}</td>
                   </ng-container>
                   <ng-container matColumnDef="customer">
                     <th mat-header-cell *matHeaderCellDef>Customer</th>
@@ -233,7 +258,7 @@
                   </ng-container>
                   <ng-container matColumnDef="owner">
                     <th mat-header-cell *matHeaderCellDef>Owner</th>
-                    <td mat-cell *matCellDef="let item">{{ item.owner?.username || 'N/A' }}</td>
+                    <td mat-cell *matCellDef="let item">{{ item.owner?.full_name || 'N/A' }}</td>
                   </ng-container>
                   <ng-container matColumnDef="category">
                     <th mat-header-cell *matHeaderCellDef>Category</th>

@@ -8,7 +8,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
-import { AdminService, User } from '../../services/admin.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { Router } from '@angular/router';
+import { AdminService, User, ChickenIntakeWithOwner, ChickenSaleWithOwner, ExpenseWithOwner } from '../../services/admin.service';
 
 @Component({
   selector: 'app-admin',
@@ -22,16 +25,19 @@ import { AdminService, User } from '../../services/admin.service';
     MatChipsModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    MatTabsModule
+    MatTabsModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
 export class AdminComponent implements OnInit {
   users: User[] = [];
-  intakes: any[] = [];
-  sales: any[] = [];
-  expenses: any[] = [];
+  intakes: ChickenIntakeWithOwner[] = [];
+  sales: ChickenSaleWithOwner[] = [];
+  expenses: ExpenseWithOwner[] = [];
+  selectedOwnerId: number | null = null;
 
   loadingUsers = false;
   loadingIntakes = false;
@@ -45,7 +51,8 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -67,9 +74,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  loadIntakes(): void {
+  loadIntakes(ownerId?: number | null): void {
     this.loadingIntakes = true;
-    this.adminService.getAllIntakes().subscribe({
+    this.adminService.getAllIntakes(ownerId ?? undefined).subscribe({
       next: (intakes) => {
         this.intakes = intakes;
         this.loadingIntakes = false;
@@ -82,9 +89,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  loadSales(): void {
+  loadSales(ownerId?: number | null): void {
     this.loadingSales = true;
-    this.adminService.getAllSales().subscribe({
+    this.adminService.getAllSales(ownerId ?? undefined).subscribe({
       next: (sales) => {
         this.sales = sales;
         this.loadingSales = false;
@@ -97,9 +104,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  loadExpenses(): void {
+  loadExpenses(ownerId?: number | null): void {
     this.loadingExpenses = true;
-    this.adminService.getAllExpenses().subscribe({
+    this.adminService.getAllExpenses(ownerId ?? undefined).subscribe({
       next: (expenses) => {
         this.expenses = expenses;
         this.loadingExpenses = false;
@@ -138,6 +145,19 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  activateUser(user: User): void {
+    this.adminService.activateUser(user.id).subscribe({
+      next: () => {
+        this.snackBar.open(`User ${user.username} activated successfully`, 'Close', { duration: 3000 });
+        this.loadUsers();
+      },
+      error: (error) => {
+        console.error('Error activating user:', error);
+        this.snackBar.open('Error activating user', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
   getUserStatus(user: User): string {
     if (!user.is_active) return 'Inactive';
     if (!user.is_approved) return 'Pending Approval';
@@ -152,6 +172,10 @@ export class AdminComponent implements OnInit {
 
   getUserRole(user: User): string {
     return user.is_superuser ? 'Super Admin' : 'Shop Owner';
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   formatCurrency(amount: number): string {

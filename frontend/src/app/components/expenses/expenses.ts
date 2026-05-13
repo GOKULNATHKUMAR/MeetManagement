@@ -11,8 +11,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { ExpensesService, Expense, ExpenseCreate, ExpenseUpdate } from '../../services/expenses.service';
+import { AuthService } from '../../services/auth.service';
 import { EditExpenseDialogComponent } from './edit-expense-dialog.component';
 
 @Component({
@@ -38,7 +40,8 @@ import { EditExpenseDialogComponent } from './edit-expense-dialog.component';
 export class Expenses implements OnInit {
   expenseForm: FormGroup;
   expenses: Expense[] = [];
-  displayedColumns: string[] = ['expense_date', 'category', 'amount', 'description', 'actions'];
+  currentUserName = '';
+  displayedColumns: string[] = ['expense_date', 'owner', 'category', 'amount', 'description', 'actions'];
   totalItems = 0;
   pageSize = 10;
   currentPage = 1;
@@ -48,8 +51,10 @@ export class Expenses implements OnInit {
   constructor(
     private fb: FormBuilder,
     private expensesService: ExpensesService,
+    private authService: AuthService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {
     this.expenseForm = this.fb.group({
       category: ['', [Validators.required]],
@@ -59,6 +64,13 @@ export class Expenses implements OnInit {
   }
 
   ngOnInit() {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.currentUserName = currentUser.full_name;
+    }
+    this.authService.currentUser$.subscribe((user: any) => {
+      this.currentUserName = user?.full_name || this.currentUserName;
+    });
     this.loadExpenses();
   }
 
@@ -145,6 +157,10 @@ export class Expenses implements OnInit {
         }
       });
     }
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   getErrorMessage(fieldName: string): string {

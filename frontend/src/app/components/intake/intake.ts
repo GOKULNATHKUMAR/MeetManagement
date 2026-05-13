@@ -11,8 +11,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { IntakeService, ChickenIntake, IntakeCreate, IntakeUpdate } from '../../services/intake.service';
+import { AuthService } from '../../services/auth.service';
 import { EditIntakeDialogComponent } from './edit-intake-dialog.component';
 
 @Component({
@@ -37,7 +39,8 @@ import { EditIntakeDialogComponent } from './edit-intake-dialog.component';
 export class Intake implements OnInit {
   intakeForm: FormGroup;
   intakes: ChickenIntake[] = [];
-  displayedColumns: string[] = ['intake_date', 'supplier', 'quantity', 'cost_per_unit', 'total_cost', 'notes', 'actions'];
+  currentUserName = '';
+  displayedColumns: string[] = ['intake_date', 'owner', 'supplier', 'quantity', 'cost_per_unit', 'total_cost', 'notes', 'actions'];
   totalItems = 0;
   pageSize = 10;
   currentPage = 1;
@@ -47,8 +50,10 @@ export class Intake implements OnInit {
   constructor(
     private fb: FormBuilder,
     private intakeService: IntakeService,
+    private authService: AuthService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {
     this.intakeForm = this.fb.group({
       quantity: ['', [Validators.required, Validators.min(1)]],
@@ -64,6 +69,13 @@ export class Intake implements OnInit {
   }
 
   ngOnInit() {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.currentUserName = currentUser.full_name;
+    }
+    this.authService.currentUser$.subscribe((user: any) => {
+      this.currentUserName = user?.full_name || this.currentUserName;
+    });
     this.loadIntakes();
   }
 
@@ -162,6 +174,10 @@ export class Intake implements OnInit {
         });
       }
     });
+  }
+
+  navigateToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   getErrorMessage(fieldName: string): string {

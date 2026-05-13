@@ -1,15 +1,18 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
-    <h1>Chicken Shop Management Dashboard</h1>
+    <div>
+      <h1>Chicken Shop Management Dashboard</h1>
+      <p *ngIf="shopName" class="shop-name">Shop: {{ shopName }}</p>
+    </div>
     <button mat-raised-button color="warn" (click)="logout()">
       <mat-icon>logout</mat-icon>
       Logout
     </button>
   </header>
 
-  <mat-grid-list cols="2" rowHeight="200px" class="dashboard-grid">
+  <div class="dashboard-grid">
     <!-- Admin Panel (Super User Only) -->
-    <mat-grid-tile *ngIf="isSuperUser">
+    <div *ngIf="isSuperUser" class="dashboard-grid-tile">
       <mat-card class="dashboard-card admin-card" (click)="navigateToAdmin()">
         <mat-card-content>
           <mat-icon class="card-icon">admin_panel_settings</mat-icon>
@@ -17,43 +20,57 @@
           <p>Manage users and system settings</p>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
+    </div>
+
+    <!-- Profile Settings -->
+    <div class="dashboard-grid-tile">
+      <mat-card class="dashboard-card profile-card" (click)="navigateToProfile()">
+        <mat-card-content>
+          <mat-icon class="card-icon">person</mat-icon>
+          <h3>Profile</h3>
+          <p>Update your account and Telegram settings</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
 
     <!-- Chicken Intake -->
-    <mat-grid-tile>
+    <div class="dashboard-grid-tile">
       <mat-card class="dashboard-card" (click)="navigateToIntake()">
         <mat-card-content>
           <mat-icon class="card-icon">inventory</mat-icon>
           <h3>Chicken Intake</h3>
-          <p>Manage chicken inventory and suppliers</p>
+          <p *ngIf="!isSuperUser">Manage chicken inventory and suppliers</p>
+          <p *ngIf="isSuperUser">Manage user intake records</p>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
+    </div>
 
     <!-- Sales -->
-    <mat-grid-tile>
+    <div class="dashboard-grid-tile">
       <mat-card class="dashboard-card" (click)="navigateToSales()">
         <mat-card-content>
           <mat-icon class="card-icon">shopping_cart</mat-icon>
           <h3>Sales</h3>
-          <p>Track sales transactions and revenue</p>
+          <p *ngIf="!isSuperUser">Track sales transactions and revenue</p>
+          <p *ngIf="isSuperUser">Manage user sales records</p>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
+    </div>
 
     <!-- Expenses -->
-    <mat-grid-tile>
+    <div class="dashboard-grid-tile">
       <mat-card class="dashboard-card" (click)="navigateToExpenses()">
         <mat-card-content>
           <mat-icon class="card-icon">receipt</mat-icon>
           <h3>Expenses</h3>
-          <p>Monitor business expenses</p>
+          <p *ngIf="!isSuperUser">Monitor business expenses</p>
+          <p *ngIf="isSuperUser">Manage user expense records</p>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
+    </div>
 
     <!-- Reports -->
-    <mat-grid-tile>
+    <div class="dashboard-grid-tile">
       <mat-card class="dashboard-card" (click)="navigateToReports()">
         <mat-card-content>
           <mat-icon class="card-icon">analytics</mat-icon>
@@ -61,6 +78,6 @@
           <p>Generate reports and analytics</p>
         </mat-card-content>
       </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
+    </div>
+  </div>
 </div>
