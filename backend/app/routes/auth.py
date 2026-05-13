@@ -25,6 +25,7 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
         email=user.email,
         username=user.username,
         full_name=user.full_name,
+        shop_name=user.shop_name,
         hashed_password=hashed_password,
         is_approved=False  # Shop owners need approval
     )

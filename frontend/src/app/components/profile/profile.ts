@@ -38,6 +38,7 @@ export class ProfileComponent implements OnInit {
     this.profileForm = this.fb.group({
       full_name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      shop_name: ['', Validators.required],
       telegram_bot_token: [''],
       telegram_chat_id: ['']
     });
@@ -49,6 +50,7 @@ export class ProfileComponent implements OnInit {
       this.profileForm.patchValue({
         full_name: this.currentUser.full_name,
         email: this.currentUser.email,
+        shop_name: this.currentUser.shop_name || '',
         telegram_bot_token: this.currentUser.telegram_bot_token || '',
         telegram_chat_id: this.currentUser.telegram_chat_id || ''
       });

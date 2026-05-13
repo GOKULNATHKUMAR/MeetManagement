@@ -8,6 +8,7 @@ export interface User {
   email: string;
   username: string;
   full_name: string;
+  shop_name?: string;
   is_active: boolean;
   is_superuser: boolean;
   is_approved: boolean;

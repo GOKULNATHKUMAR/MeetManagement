@@ -9,14 +9,17 @@ class UserBase(BaseModel):
     full_name: str
     telegram_bot_token: Optional[str] = None
     telegram_chat_id: Optional[str] = None
+    shop_name: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
+    shop_name: str
 
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     username: Optional[str] = None
     full_name: Optional[str] = None
+    shop_name: Optional[str] = None
     is_active: Optional[bool] = None
     is_approved: Optional[bool] = None
     telegram_bot_token: Optional[str] = None
