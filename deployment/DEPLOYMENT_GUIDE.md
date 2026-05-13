@@ -1,25 +1,45 @@
 # Deployment Guide
 
+## ⭐ Quick Start: Railway Deployment (Recommended for 5 Users)
+
+For complete step-by-step Railway deployment guide, see **[RAILWAY_DEPLOYMENT.md](../RAILWAY_DEPLOYMENT.md)**
+
+### Quick Summary:
+- ✅ **Cost**: Free for 5 users
+- ✅ **Setup Time**: ~20 minutes
+- ✅ **Includes**: Backend API + Frontend + PostgreSQL Database
+- ✅ **Your SECRET_KEY**: `a5EJBgjas4WmTSJTZnXBnaXHMr4eXUWapJ_EmwVias4`
+
+**Next Steps:**
+1. Go to https://railway.app
+2. Sign up with GitHub
+3. Follow the detailed guide in [RAILWAY_DEPLOYMENT.md](../RAILWAY_DEPLOYMENT.md)
+
+---
+
 ## Supported Free Platforms for Up to 5 Users
 
-### 1. Railway.app
-- **Pros**: Connected to GitHub, easy deployments, good free tier
+### 1. Railway.app ⭐ (RECOMMENDED)
+- **Pros**: Connected to GitHub, easy deployments, good free tier, includes database
 - **Cons**: Limited for very heavy workloads
-- **Recommended for**: Most setups
+- **Recommended for**: Your setup (5 users)
+- **Detailed Guide**: [RAILWAY_DEPLOYMENT.md](../RAILWAY_DEPLOYMENT.md)
 
-#### Setup Steps:
-1. Sign up at https://railway.app
-2. Connect your GitHub account
-3. Create new project from repository
-4. Configure environment variables
-5. Deploy backend and frontend separately
+#### Quick Setup:
+1. Sign up at https://railway.app (with GitHub)
+2. Create new project
+3. Add PostgreSQL database (Railway → New Service → PostgreSQL)
+4. Deploy backend (GitHub Repo → backend folder)
+5. Deploy frontend (GitHub Repo → frontend folder)
+6. Set environment variables (DATABASE_URL, SECRET_KEY, etc.)
+7. Done! ✅
 
 ### 2. Render
 - **Pros**: Free tier includes background workers and databases
 - **Cons**: Services spin down after 15 minutes of inactivity
 - **Recommended for**: Development and light production
 
-#### Setup Steps:
+#### Quick Setup:
 1. Sign up at https://render.com
 2. Click "New +" → Select service type (Web Service/PostgreSQL)
 3. Connect GitHub repository
@@ -31,7 +51,7 @@
 - **Cons**: Requires Docker knowledge
 - **Recommended for**: Production-ready setups
 
-#### Setup Steps:
+#### Quick Setup:
 1. Sign up at https://fly.io and install flyctl CLI
 2. Run `flyctl launch` in project root
 3. Configure PostgreSQL database
@@ -39,13 +59,13 @@
 
 ## Database Setup (PostgreSQL)
 
-### Railway PostgreSQL
+### Railway PostgreSQL (Recommended)
 ```
-1. Go to Railway dashboard
-2. Click "New Service" → PostgreSQL
-3. Create plugin
+1. In Railway project, click "New Service" → PostgreSQL
+2. Database auto-creates
+3. Copy connection string from Variables tab
 4. Add DATABASE_URL to backend environment
-5. Apply migrations
+5. Apply migrations automatically on deploy
 ```
 
 ### Render PostgreSQL
