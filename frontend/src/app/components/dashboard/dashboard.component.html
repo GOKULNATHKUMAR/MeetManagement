@@ -36,7 +36,8 @@
         <mat-card-content>
           <mat-icon class="card-icon">inventory</mat-icon>
           <h3>Chicken Intake</h3>
-          <p>Manage chicken inventory and suppliers</p>
+          <p *ngIf="!isSuperUser">Manage chicken inventory and suppliers</p>
+          <p *ngIf="isSuperUser">Manage user intake records</p>
         </mat-card-content>
       </mat-card>
     </div>
@@ -47,7 +48,8 @@
         <mat-card-content>
           <mat-icon class="card-icon">shopping_cart</mat-icon>
           <h3>Sales</h3>
-          <p>Track sales transactions and revenue</p>
+          <p *ngIf="!isSuperUser">Track sales transactions and revenue</p>
+          <p *ngIf="isSuperUser">Manage user sales records</p>
         </mat-card-content>
       </mat-card>
     </div>
@@ -58,7 +60,8 @@
         <mat-card-content>
           <mat-icon class="card-icon">receipt</mat-icon>
           <h3>Expenses</h3>
-          <p>Monitor business expenses</p>
+          <p *ngIf="!isSuperUser">Monitor business expenses</p>
+          <p *ngIf="isSuperUser">Manage user expense records</p>
         </mat-card-content>
       </mat-card>
     </div>

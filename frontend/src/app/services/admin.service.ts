@@ -85,15 +85,18 @@ export class AdminService {
     return this.apiService.put(`/admin/users/${userId}/activate`, {});
   }
 
-  getAllIntakes(): Observable<ChickenIntakeWithOwner[]> {
-    return this.apiService.get<ChickenIntakeWithOwner[]>('/admin/intakes/all');
+  getAllIntakes(userId?: number): Observable<ChickenIntakeWithOwner[]> {
+    const query = userId ? `?owner_id=${userId}` : '';
+    return this.apiService.get<ChickenIntakeWithOwner[]>(`/admin/intakes/all${query}`);
   }
 
-  getAllSales(): Observable<ChickenSaleWithOwner[]> {
-    return this.apiService.get<ChickenSaleWithOwner[]>('/admin/sales/all');
+  getAllSales(userId?: number): Observable<ChickenSaleWithOwner[]> {
+    const query = userId ? `?owner_id=${userId}` : '';
+    return this.apiService.get<ChickenSaleWithOwner[]>(`/admin/sales/all${query}`);
   }
 
-  getAllExpenses(): Observable<ExpenseWithOwner[]> {
-    return this.apiService.get<ExpenseWithOwner[]>('/admin/expenses/all');
+  getAllExpenses(userId?: number): Observable<ExpenseWithOwner[]> {
+    const query = userId ? `?owner_id=${userId}` : '';
+    return this.apiService.get<ExpenseWithOwner[]>(`/admin/expenses/all${query}`);
   }
 }

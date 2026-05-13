@@ -122,6 +122,19 @@
     <!-- System Data Tab -->
     <mat-tab label="System Data">
       <div class="tab-content">
+        <div class="filter-row">
+          <mat-form-field appearance="fill" class="owner-filter">
+            <mat-label>Filter by Owner</mat-label>
+            <mat-select [(value)]="selectedOwnerId">
+              <mat-option [value]="null">All Owners</mat-option>
+              <mat-option *ngFor="let user of users" [value]="user.id">{{ user.full_name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="loadIntakes(selectedOwnerId); loadSales(selectedOwnerId); loadExpenses(selectedOwnerId)">
+            <mat-icon>filter_list</mat-icon>
+            Apply Filter
+          </button>
+        </div>
         <div class="data-grid">
           <!-- All Intakes -->
           <mat-card class="data-card">

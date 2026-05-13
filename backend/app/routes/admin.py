@@ -62,30 +62,42 @@ async def activate_user(
 async def get_all_intakes(
     skip: int = 0,
     limit: int = 100,
+    owner_id: int = None,
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    intakes = db.query(ChickenIntake).options(joinedload(ChickenIntake.owner)).offset(skip).limit(limit).all()
+    query = db.query(ChickenIntake).options(joinedload(ChickenIntake.owner))
+    if owner_id is not None:
+        query = query.filter(ChickenIntake.owner_id == owner_id)
+    intakes = query.offset(skip).limit(limit).all()
     return intakes
 
 @router.get("/sales/all", response_model=List[ChickenSaleWithOwner])
 async def get_all_sales(
     skip: int = 0,
     limit: int = 100,
+    owner_id: int = None,
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    sales = db.query(ChickenSale).options(joinedload(ChickenSale.owner)).offset(skip).limit(limit).all()
+    query = db.query(ChickenSale).options(joinedload(ChickenSale.owner))
+    if owner_id is not None:
+        query = query.filter(ChickenSale.owner_id == owner_id)
+    sales = query.offset(skip).limit(limit).all()
     return sales
 
 @router.get("/expenses/all", response_model=List[ExpenseWithOwner])
 async def get_all_expenses(
     skip: int = 0,
     limit: int = 100,
+    owner_id: int = None,
     current_user = Depends(get_current_superuser),
     db: Session = Depends(get_db)
 ):
-    expenses = db.query(Expense).options(joinedload(Expense.owner)).offset(skip).limit(limit).all()
+    query = db.query(Expense).options(joinedload(Expense.owner))
+    if owner_id is not None:
+        query = query.filter(Expense.owner_id == owner_id)
+    expenses = query.offset(skip).limit(limit).all()
     return expenses
 
 @router.get("/dashboard/stats")

@@ -2,6 +2,13 @@ import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
 
+export interface OwnerBasic {
+  id: number;
+  full_name: string;
+  email: string;
+  username: string;
+}
+
 export interface ChickenSale {
   id: number;
   quantity: number;
@@ -11,6 +18,7 @@ export interface ChickenSale {
   sale_date: string;
   notes?: string;
   owner_id: number;
+  owner?: OwnerBasic;
   created_at: string;
   updated_at?: string;
 }

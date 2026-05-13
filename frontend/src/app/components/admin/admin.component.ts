@@ -8,6 +8,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { AdminService, User, ChickenIntakeWithOwner, ChickenSaleWithOwner, ExpenseWithOwner } from '../../services/admin.service';
 
@@ -23,7 +25,9 @@ import { AdminService, User, ChickenIntakeWithOwner, ChickenSaleWithOwner, Expen
     MatChipsModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    MatTabsModule
+    MatTabsModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
@@ -33,6 +37,7 @@ export class AdminComponent implements OnInit {
   intakes: ChickenIntakeWithOwner[] = [];
   sales: ChickenSaleWithOwner[] = [];
   expenses: ExpenseWithOwner[] = [];
+  selectedOwnerId: number | null = null;
 
   loadingUsers = false;
   loadingIntakes = false;
@@ -69,9 +74,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  loadIntakes(): void {
+  loadIntakes(ownerId?: number | null): void {
     this.loadingIntakes = true;
-    this.adminService.getAllIntakes().subscribe({
+    this.adminService.getAllIntakes(ownerId ?? undefined).subscribe({
       next: (intakes) => {
         this.intakes = intakes;
         this.loadingIntakes = false;
@@ -84,9 +89,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  loadSales(): void {
+  loadSales(ownerId?: number | null): void {
     this.loadingSales = true;
-    this.adminService.getAllSales().subscribe({
+    this.adminService.getAllSales(ownerId ?? undefined).subscribe({
       next: (sales) => {
         this.sales = sales;
         this.loadingSales = false;
@@ -99,9 +104,9 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  loadExpenses(): void {
+  loadExpenses(ownerId?: number | null): void {
     this.loadingExpenses = true;
-    this.adminService.getAllExpenses().subscribe({
+    this.adminService.getAllExpenses(ownerId ?? undefined).subscribe({
       next: (expenses) => {
         this.expenses = expenses;
         this.loadingExpenses = false;

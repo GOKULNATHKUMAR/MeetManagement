@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { SalesService, ChickenSale, SaleCreate, SaleUpdate } from '../../services/sales.service';
+import { AuthService } from '../../services/auth.service';
 import { EditSalesDialogComponent } from './edit-sales-dialog.component';
 
 @Component({
@@ -39,7 +40,8 @@ import { EditSalesDialogComponent } from './edit-sales-dialog.component';
 export class Sales implements OnInit {
   saleForm: FormGroup;
   sales: ChickenSale[] = [];
-  displayedColumns: string[] = ['sale_date', 'customer_name', 'quantity', 'price_per_unit', 'total_revenue', 'notes', 'actions'];
+  currentUserName = '';
+  displayedColumns: string[] = ['sale_date', 'owner', 'customer_name', 'quantity', 'price_per_unit', 'total_revenue', 'notes', 'actions'];
   totalItems = 0;
   pageSize = 10;
   currentPage = 1;
@@ -49,6 +51,7 @@ export class Sales implements OnInit {
   constructor(
     private fb: FormBuilder,
     private salesService: SalesService,
+    private authService: AuthService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private router: Router
@@ -66,6 +69,13 @@ export class Sales implements OnInit {
   }
 
   ngOnInit() {
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.currentUserName = currentUser.full_name;
+    }
+    this.authService.currentUser$.subscribe((user: any) => {
+      this.currentUserName = user?.full_name || this.currentUserName;
+    });
     this.loadSales();
   }
 
