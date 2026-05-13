@@ -15,7 +15,7 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200", "http://127.0.0.1:4200"],  # Add your frontend URL
+    allow_origins=["http://localhost:4200", "http://127.0.0.1:4200", "https://frontend-meetmanagement.onrender.com"],  # Add your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
