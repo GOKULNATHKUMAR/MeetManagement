@@ -20,6 +20,7 @@
 - [x] You have your SECRET_KEY (above)
 - [x] Email address ready for Railway signup
 - [x] (Optional) Telegram bot token for notifications
+- [x] Python version pinned to 3.12 (.python-version file created)
 
 ---
 
@@ -44,7 +45,8 @@
 
 ### Phase 3: Deploy Backend (5 min)
 - [x] Created `.python-version` file (pinned to 3.12)
-- [ ] In Railway project, click "New Service"
+- [x] Committed and pushed to GitHub
+- [ ] In Railway project, click "New Service" (if not created yet)
 - [ ] Select "GitHub Repo"
 - [ ] Select your repository
 - [ ] Root Directory: `backend`
