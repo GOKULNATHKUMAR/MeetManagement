@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://localhost:8000/api'; // Change this to your backend URL
+  private baseUrl = window.location.hostname === 'localhost'
+    ? 'http://localhost:8000/api'
+    : 'https://meetmanagement.onrender.com/api';
 
   constructor(private http: HttpClient) { }
 
